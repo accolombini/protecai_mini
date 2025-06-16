@@ -1,0 +1,27 @@
+# Linting e formatação
+black==24.4.2
+flake8==7.0.0
+isort==5.13.2
+mypy==1.10.0
+
+# Pre-commit hooks
+pre-commit==3.7.1
+
+# Testes
+pytest==8.2.1
+pytest-asyncio==0.23.6
+httpx==0.27.0
+coverage==7.5.1
+
+# Documentação com MkDocs (versões compatíveis)
+mkdocs-material==9.5.21
+
+# Plugins e extensões para MkDocs
+mkdocs>=1.6.0
+pyyaml-env-tag==1.1
+watchdog==6.0.0
+markdown==3.8
+ghp-import==2.1.0
+mergedeep==1.3.4
+colorama==0.4.6
+babel==2.17.0
