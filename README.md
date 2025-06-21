@@ -89,38 +89,36 @@ Para implementar o algoritmo RL:
 ## 🚀 Estrutura do Projeto
 
 ```bash
-petro_protecai_mini/
-├── src/
+.
+├── infra/                         # Código-fonte de dispositivos de proteção (OO)
+│   └── protecao/
+│       └── protecao_eletrica.py
+├── simuladores/                  # Simuladores baseados em pandapower
+│   └── power_sim/
+│       ├── scripts_simulacao.py
+│       └── data/
+│           └── ieee14.json
+├── tests/                        # Testes automatizados (pytest)
+│   ├── test_ieee14.py
+│   ├── test_protecao_eletrica.py
+│   └── test_simulacao.py
+├── htmlcov/                      # Relatório HTML de cobertura de testes
+├── src/                          # Aplicação web completa
 │   ├── backend/
+│   │   ├── database/
 │   │   ├── api/
 │   │   │   ├── routers/
-│   │   │   └── main.py
-│   │   ├── services/
-│   │   │   └── simulacao.py
-│   │   └── database/
-│   │       └── models.py
+│   │   │   └── services/
+│   │   └── main.py
 │   └── frontend/
 │       └── petro-protecai-frontend/
-│           ├── index.html
-│           ├── vite.config.ts
-│           ├── src/
-│           │   ├── App.tsx
-│           │   ├── main.tsx
-│           │   └── index.css
-├── docs/
-│   └── Guias, documentação técnica e relatórios
-├── simuladores/
-│   └── pandapower/
-│       └── scripts_simulacao.py
-├── infra/
-│   ├── Dockerfile
-│   └── docker-compose.yml
-├── tests/
-│   ├── test_api.py
-│   └── test_simulation.py
-├── .github/
-│   └── workflows/
-│       └── ci_cd.yml
+│           ├── public/
+│           └── src/
+│               └── assets/
+├── requirements.txt              # Dependências principais
+├── requirements-dev.txt          # Dependências para testes e dev
+├── docker-compose.yml
+├── Dockerfile
 └── README.md
 ```
 
@@ -256,6 +254,83 @@ pip install -r requirements.txt
 pip install -r requirements-dev.txt
 
 ```
+
+## 🧪 Testes Automatizados e Cobertura
+
+Todos os testes são executados com `pytest`, com cobertura gerada por `coverage.py`.
+
+```bash
+pytest --cov=infra.protecao --cov-report=html tests/
+```
+
+O relatório é gerado em:
+```
+htmlcov/index.html
+```
+
+### Interpretação das Porcentagens de Cobertura
+
+- As porcentagens mostradas ao lado de cada arquivo de teste refletem **quanto do pacote `infra.protecao` foi coberto por aquele arquivo especificamente**.
+- Elas **não representam falha**, mas apenas o impacto individual daquele teste na cobertura global.
+
+Exemplo:
+```
+tests/test_ieee14.py .......... [ 20% ]   # Cobre apenas indiretamente parte de infra.protecao
+```
+
+> A cobertura total final do projeto é apresentada no `index.html` e deve atingir **100%** se todos os módulos estiverem bem cobertos.
+
+---
+
+## 🚀 Execução Local
+
+### Simulação Elétrica (IEEE 14 Barras)
+```bash
+python main.py
+```
+
+### Backend (FastAPI)
+```bash
+cd src/backend
+uvicorn main:app --reload
+```
+
+### Frontend (React)
+```bash
+cd src/frontend/petro-protecai-frontend
+npm install
+npm run dev
+```
+
+---
+
+## ✅ Status Atual
+- [x] Modelagem OO de proteção elétrica (Rele51, Rele27, etc)
+- [x] Simulação IEEE 14 Barras com pandapower
+- [x] Testes unitários com cobertura
+- [x] Backend funcional com FastAPI
+- [x] Frontend funcional com React + Tailwind
+- [x] CI/CD com GitHub Actions
+
+---
+
+## 📄 Documentação
+
+Documentos adicionais:
+- `docs/Stro_ProtecAI_Mini.docx`
+- `docs/Metro_ProtecAI_Mini.docx`
+
+---
+
+## 👥 Contato
+
+Eng. de Sistemas: Prof. Angelo Cesar Colombini  
+Universidade Federal Fluminense – UFF
+
+---
+
+## 🧠 Observação Final
+Este projeto segue princípios profissionais de Engenharia de Software: separação de responsabilidades, testes automatizados, modularidade e pipeline de entrega. Ele serve como base para expansão futura com controle adaptativo, lógicas de seleção e redes maiores.
 
 ## 🎯 Roadmap futuro
 
