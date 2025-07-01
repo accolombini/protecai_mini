@@ -1,0 +1,2113 @@
+{
+  "bus": {
+    "0": {
+      "name": 1,
+      "vn_kv": 135.0,
+      "type": "b",
+      "zone": 1.0,
+      "in_service": true,
+      "max_vm_pu": 1.06,
+      "min_vm_pu": 0.94
+    },
+    "1": {
+      "name": 2,
+      "vn_kv": 135.0,
+      "type": "b",
+      "zone": 1.0,
+      "in_service": true,
+      "max_vm_pu": 1.06,
+      "min_vm_pu": 0.94
+    },
+    "2": {
+      "name": 3,
+      "vn_kv": 135.0,
+      "type": "b",
+      "zone": 1.0,
+      "in_service": true,
+      "max_vm_pu": 1.06,
+      "min_vm_pu": 0.94
+    },
+    "3": {
+      "name": 4,
+      "vn_kv": 135.0,
+      "type": "b",
+      "zone": 1.0,
+      "in_service": true,
+      "max_vm_pu": 1.06,
+      "min_vm_pu": 0.94
+    },
+    "4": {
+      "name": 5,
+      "vn_kv": 135.0,
+      "type": "b",
+      "zone": 1.0,
+      "in_service": true,
+      "max_vm_pu": 1.06,
+      "min_vm_pu": 0.94
+    },
+    "5": {
+      "name": 6,
+      "vn_kv": 0.208,
+      "type": "b",
+      "zone": 1.0,
+      "in_service": true,
+      "max_vm_pu": 1.06,
+      "min_vm_pu": 0.94
+    },
+    "6": {
+      "name": 7,
+      "vn_kv": 14.0,
+      "type": "b",
+      "zone": 1.0,
+      "in_service": true,
+      "max_vm_pu": 1.06,
+      "min_vm_pu": 0.94
+    },
+    "7": {
+      "name": 8,
+      "vn_kv": 12.0,
+      "type": "b",
+      "zone": 1.0,
+      "in_service": true,
+      "max_vm_pu": 1.06,
+      "min_vm_pu": 0.94
+    },
+    "8": {
+      "name": 9,
+      "vn_kv": 0.208,
+      "type": "b",
+      "zone": 1.0,
+      "in_service": true,
+      "max_vm_pu": 1.06,
+      "min_vm_pu": 0.94
+    },
+    "9": {
+      "name": 10,
+      "vn_kv": 0.208,
+      "type": "b",
+      "zone": 1.0,
+      "in_service": true,
+      "max_vm_pu": 1.06,
+      "min_vm_pu": 0.94
+    },
+    "10": {
+      "name": 11,
+      "vn_kv": 0.208,
+      "type": "b",
+      "zone": 1.0,
+      "in_service": true,
+      "max_vm_pu": 1.06,
+      "min_vm_pu": 0.94
+    },
+    "11": {
+      "name": 12,
+      "vn_kv": 0.208,
+      "type": "b",
+      "zone": 1.0,
+      "in_service": true,
+      "max_vm_pu": 1.06,
+      "min_vm_pu": 0.94
+    },
+    "12": {
+      "name": 13,
+      "vn_kv": 0.208,
+      "type": "b",
+      "zone": 1.0,
+      "in_service": true,
+      "max_vm_pu": 1.06,
+      "min_vm_pu": 0.94
+    },
+    "13": {
+      "name": 14,
+      "vn_kv": 0.208,
+      "type": "b",
+      "zone": 1.0,
+      "in_service": true,
+      "max_vm_pu": 1.06,
+      "min_vm_pu": 0.94
+    }
+  },
+  "load": {
+    "0": {
+      "name": null,
+      "bus": 1,
+      "p_mw": 21.7,
+      "q_mvar": 12.7,
+      "const_z_percent": 0.0,
+      "const_i_percent": 0.0,
+      "sn_mva": NaN,
+      "scaling": 1.0,
+      "in_service": true,
+      "type": null,
+      "controllable": false
+    },
+    "1": {
+      "name": null,
+      "bus": 2,
+      "p_mw": 94.2,
+      "q_mvar": 19.0,
+      "const_z_percent": 0.0,
+      "const_i_percent": 0.0,
+      "sn_mva": NaN,
+      "scaling": 1.0,
+      "in_service": true,
+      "type": null,
+      "controllable": false
+    },
+    "2": {
+      "name": null,
+      "bus": 3,
+      "p_mw": 47.8,
+      "q_mvar": -3.9,
+      "const_z_percent": 0.0,
+      "const_i_percent": 0.0,
+      "sn_mva": NaN,
+      "scaling": 1.0,
+      "in_service": true,
+      "type": null,
+      "controllable": false
+    },
+    "3": {
+      "name": null,
+      "bus": 4,
+      "p_mw": 7.6,
+      "q_mvar": 1.6,
+      "const_z_percent": 0.0,
+      "const_i_percent": 0.0,
+      "sn_mva": NaN,
+      "scaling": 1.0,
+      "in_service": true,
+      "type": null,
+      "controllable": false
+    },
+    "4": {
+      "name": null,
+      "bus": 5,
+      "p_mw": 11.2,
+      "q_mvar": 7.5,
+      "const_z_percent": 0.0,
+      "const_i_percent": 0.0,
+      "sn_mva": NaN,
+      "scaling": 1.0,
+      "in_service": true,
+      "type": null,
+      "controllable": false
+    },
+    "5": {
+      "name": null,
+      "bus": 8,
+      "p_mw": 29.5,
+      "q_mvar": 16.6,
+      "const_z_percent": 0.0,
+      "const_i_percent": 0.0,
+      "sn_mva": NaN,
+      "scaling": 1.0,
+      "in_service": true,
+      "type": null,
+      "controllable": false
+    },
+    "6": {
+      "name": null,
+      "bus": 9,
+      "p_mw": 9.0,
+      "q_mvar": 5.8,
+      "const_z_percent": 0.0,
+      "const_i_percent": 0.0,
+      "sn_mva": NaN,
+      "scaling": 1.0,
+      "in_service": true,
+      "type": null,
+      "controllable": false
+    },
+    "7": {
+      "name": null,
+      "bus": 10,
+      "p_mw": 3.5,
+      "q_mvar": 1.8,
+      "const_z_percent": 0.0,
+      "const_i_percent": 0.0,
+      "sn_mva": NaN,
+      "scaling": 1.0,
+      "in_service": true,
+      "type": null,
+      "controllable": false
+    },
+    "8": {
+      "name": null,
+      "bus": 11,
+      "p_mw": 6.1,
+      "q_mvar": 1.6,
+      "const_z_percent": 0.0,
+      "const_i_percent": 0.0,
+      "sn_mva": NaN,
+      "scaling": 1.0,
+      "in_service": true,
+      "type": null,
+      "controllable": false
+    },
+    "9": {
+      "name": null,
+      "bus": 12,
+      "p_mw": 13.5,
+      "q_mvar": 5.8,
+      "const_z_percent": 0.0,
+      "const_i_percent": 0.0,
+      "sn_mva": NaN,
+      "scaling": 1.0,
+      "in_service": true,
+      "type": null,
+      "controllable": false
+    },
+    "10": {
+      "name": null,
+      "bus": 13,
+      "p_mw": 14.9,
+      "q_mvar": 5.0,
+      "const_z_percent": 0.0,
+      "const_i_percent": 0.0,
+      "sn_mva": NaN,
+      "scaling": 1.0,
+      "in_service": true,
+      "type": null,
+      "controllable": false
+    }
+  },
+  "sgen": {},
+  "motor": {},
+  "asymmetric_load": {},
+  "asymmetric_sgen": {},
+  "storage": {},
+  "gen": {
+    "0": {
+      "name": null,
+      "bus": 1,
+      "p_mw": 40.0,
+      "vm_pu": 1.045,
+      "sn_mva": NaN,
+      "min_q_mvar": -40.0,
+      "max_q_mvar": 50.0,
+      "scaling": 1.0,
+      "slack": false,
+      "in_service": true,
+      "slack_weight": 0.0,
+      "type": null,
+      "controllable": true,
+      "max_p_mw": 140.0,
+      "min_p_mw": 0.0
+    },
+    "1": {
+      "name": null,
+      "bus": 2,
+      "p_mw": 0.0,
+      "vm_pu": 1.01,
+      "sn_mva": NaN,
+      "min_q_mvar": 0.0,
+      "max_q_mvar": 40.0,
+      "scaling": 1.0,
+      "slack": false,
+      "in_service": true,
+      "slack_weight": 0.0,
+      "type": null,
+      "controllable": true,
+      "max_p_mw": 100.0,
+      "min_p_mw": 0.0
+    },
+    "2": {
+      "name": null,
+      "bus": 5,
+      "p_mw": 0.0,
+      "vm_pu": 1.07,
+      "sn_mva": NaN,
+      "min_q_mvar": -6.0,
+      "max_q_mvar": 24.0,
+      "scaling": 1.0,
+      "slack": false,
+      "in_service": true,
+      "slack_weight": 0.0,
+      "type": null,
+      "controllable": true,
+      "max_p_mw": 100.0,
+      "min_p_mw": 0.0
+    },
+    "3": {
+      "name": null,
+      "bus": 7,
+      "p_mw": 0.0,
+      "vm_pu": 1.09,
+      "sn_mva": NaN,
+      "min_q_mvar": -6.0,
+      "max_q_mvar": 24.0,
+      "scaling": 1.0,
+      "slack": false,
+      "in_service": true,
+      "slack_weight": 0.0,
+      "type": null,
+      "controllable": true,
+      "max_p_mw": 100.0,
+      "min_p_mw": 0.0
+    }
+  },
+  "switch": {},
+  "shunt": {
+    "0": {
+      "bus": 8,
+      "name": null,
+      "q_mvar": -19.0,
+      "p_mw": 0.0,
+      "vn_kv": 0.208,
+      "step": 1,
+      "max_step": 1,
+      "in_service": true
+    }
+  },
+  "svc": {},
+  "ssc": {},
+  "ext_grid": {
+    "0": {
+      "name": null,
+      "bus": 0,
+      "vm_pu": 1.06,
+      "va_degree": 0.0,
+      "slack_weight": 1.0,
+      "in_service": true,
+      "max_p_mw": 332.40000000000003,
+      "min_p_mw": 0.0,
+      "max_q_mvar": 10.0,
+      "min_q_mvar": 0.0
+    }
+  },
+  "line": {
+    "0": {
+      "name": null,
+      "std_type": null,
+      "from_bus": 0,
+      "to_bus": 1,
+      "length_km": 1.0,
+      "r_ohm_per_km": 3.532005,
+      "x_ohm_per_km": 10.7837325,
+      "c_nf_per_km": 768.4847732283562,
+      "g_us_per_km": 0.0,
+      "max_i_ka": 42.33901974057255,
+      "df": 1.0,
+      "parallel": 1,
+      "type": "ol",
+      "in_service": true,
+      "max_loading_percent": 100.0
+    },
+    "2": {
+      "name": null,
+      "std_type": null,
+      "from_bus": 1,
+      "to_bus": 2,
+      "length_km": 1.0,
+      "r_ohm_per_km": 8.5639275,
+      "x_ohm_per_km": 36.0800325,
+      "c_nf_per_km": 637.4930505189773,
+      "g_us_per_km": 0.0,
+      "max_i_ka": 42.33901974057255,
+      "df": 1.0,
+      "parallel": 1,
+      "type": "ol",
+      "in_service": true,
+      "max_loading_percent": 100.0
+    },
+    "3": {
+      "name": null,
+      "std_type": null,
+      "from_bus": 1,
+      "to_bus": 3,
+      "length_km": 1.0,
+      "r_ohm_per_km": 10.5905475,
+      "x_ohm_per_km": 32.13432,
+      "c_nf_per_km": 494.8576191243203,
+      "g_us_per_km": 0.0,
+      "max_i_ka": 42.33901974057255,
+      "df": 1.0,
+      "parallel": 1,
+      "type": "ol",
+      "in_service": true,
+      "max_loading_percent": 100.0
+    },
+    "4": {
+      "name": null,
+      "std_type": null,
+      "from_bus": 1,
+      "to_bus": 4,
+      "length_km": 1.0,
+      "r_ohm_per_km": 10.3791375,
+      "x_ohm_per_km": 31.68963,
+      "c_nf_per_km": 503.5904006382789,
+      "g_us_per_km": 0.0,
+      "max_i_ka": 42.33901974057255,
+      "df": 1.0,
+      "parallel": 1,
+      "type": "ol",
+      "in_service": true,
+      "max_loading_percent": 100.0
+    },
+    "5": {
+      "name": null,
+      "std_type": null,
+      "from_bus": 2,
+      "to_bus": 3,
+      "length_km": 1.0,
+      "r_ohm_per_km": 12.2125725,
+      "x_ohm_per_km": 31.1702175,
+      "c_nf_per_km": 186.29933896445,
+      "g_us_per_km": 0.0,
+      "max_i_ka": 42.33901974057255,
+      "df": 1.0,
+      "parallel": 1,
+      "type": "ol",
+      "in_service": true,
+      "max_loading_percent": 100.0
+    },
+    "6": {
+      "name": null,
+      "std_type": null,
+      "from_bus": 3,
+      "to_bus": 4,
+      "length_km": 1.0,
+      "r_ohm_per_km": 2.4330375,
+      "x_ohm_per_km": 7.6745475,
+      "c_nf_per_km": 0.0,
+      "g_us_per_km": 0.0,
+      "max_i_ka": 42.33901974057255,
+      "df": 1.0,
+      "parallel": 1,
+      "type": "ol",
+      "in_service": true,
+      "max_loading_percent": 100.0
+    },
+    "7": {
+      "name": null,
+      "std_type": null,
+      "from_bus": 5,
+      "to_bus": 10,
+      "length_km": 1.0,
+      "r_ohm_per_km": 4.10921472e-05,
+      "x_ohm_per_km": 8.6052096e-05,
+      "c_nf_per_km": 0.0,
+      "g_us_per_km": 0.0,
+      "max_i_ka": 27479.65223546777,
+      "df": 1.0,
+      "parallel": 1,
+      "type": "ol",
+      "in_service": true,
+      "max_loading_percent": 100.0
+    },
+    "8": {
+      "name": null,
+      "std_type": null,
+      "from_bus": 5,
+      "to_bus": 11,
+      "length_km": 1.0,
+      "r_ohm_per_km": 5.31757824e-05,
+      "x_ohm_per_km": 0.0001106736384,
+      "c_nf_per_km": 0.0,
+      "g_us_per_km": 0.0,
+      "max_i_ka": 27479.65223546777,
+      "df": 1.0,
+      "parallel": 1,
+      "type": "ol",
+      "in_service": true,
+      "max_loading_percent": 100.0
+    },
+    "9": {
+      "name": null,
+      "std_type": null,
+      "from_bus": 5,
+      "to_bus": 12,
+      "length_km": 1.0,
+      "r_ohm_per_km": 2.8619136e-05,
+      "x_ohm_per_km": 5.63600128e-05,
+      "c_nf_per_km": 0.0,
+      "g_us_per_km": 0.0,
+      "max_i_ka": 27479.65223546777,
+      "df": 1.0,
+      "parallel": 1,
+      "type": "ol",
+      "in_service": true,
+      "max_loading_percent": 100.0
+    },
+    "10": {
+      "name": null,
+      "std_type": null,
+      "from_bus": 8,
+      "to_bus": 9,
+      "length_km": 1.0,
+      "r_ohm_per_km": 1.37622784e-05,
+      "x_ohm_per_km": 3.655808e-05,
+      "c_nf_per_km": 0.0,
+      "g_us_per_km": 0.0,
+      "max_i_ka": 27479.65223546777,
+      "df": 1.0,
+      "parallel": 1,
+      "type": "ol",
+      "in_service": true,
+      "max_loading_percent": 100.0
+    },
+    "11": {
+      "name": null,
+      "std_type": null,
+      "from_bus": 8,
+      "to_bus": 13,
+      "length_km": 1.0,
+      "r_ohm_per_km": 5.49928704e-05,
+      "x_ohm_per_km": 0.0001169772032,
+      "c_nf_per_km": 0.0,
+      "g_us_per_km": 0.0,
+      "max_i_ka": 27479.65223546777,
+      "df": 1.0,
+      "parallel": 1,
+      "type": "ol",
+      "in_service": true,
+      "max_loading_percent": 100.0
+    },
+    "12": {
+      "name": null,
+      "std_type": null,
+      "from_bus": 9,
+      "to_bus": 10,
+      "length_km": 1.0,
+      "r_ohm_per_km": 3.5498112e-05,
+      "x_ohm_per_km": 8.30971648e-05,
+      "c_nf_per_km": 0.0,
+      "g_us_per_km": 0.0,
+      "max_i_ka": 27479.65223546777,
+      "df": 1.0,
+      "parallel": 1,
+      "type": "ol",
+      "in_service": true,
+      "max_loading_percent": 100.0
+    },
+    "13": {
+      "name": null,
+      "std_type": null,
+      "from_bus": 11,
+      "to_bus": 12,
+      "length_km": 1.0,
+      "r_ohm_per_km": 9.55788288e-05,
+      "x_ohm_per_km": 8.64760832e-05,
+      "c_nf_per_km": 0.0,
+      "g_us_per_km": 0.0,
+      "max_i_ka": 27479.65223546777,
+      "df": 1.0,
+      "parallel": 1,
+      "type": "ol",
+      "in_service": true,
+      "max_loading_percent": 100.0
+    },
+    "14": {
+      "name": null,
+      "std_type": null,
+      "from_bus": 12,
+      "to_bus": 13,
+      "length_km": 1.0,
+      "r_ohm_per_km": 7.39511552e-05,
+      "x_ohm_per_km": 0.0001505673728,
+      "c_nf_per_km": 0.0,
+      "g_us_per_km": 0.0,
+      "max_i_ka": 27479.65223546777,
+      "df": 1.0,
+      "parallel": 1,
+      "type": "ol",
+      "in_service": true,
+      "max_loading_percent": 100.0
+    }
+  },
+  "trafo": {
+    "0": {
+      "name": null,
+      "std_type": null,
+      "hv_bus": 3,
+      "lv_bus": 6,
+      "sn_mva": 9900.0,
+      "vn_hv_kv": 135.0,
+      "vn_lv_kv": 14.0,
+      "vk_percent": 2070.288,
+      "vkr_percent": 0.0,
+      "pfe_kw": 0.0,
+      "i0_percent": 0.0,
+      "shift_degree": 0.0,
+      "tap_side": "hv",
+      "tap_neutral": 0.0,
+      "tap_min": NaN,
+      "tap_max": NaN,
+      "tap_step_percent": 2.2,
+      "tap_step_degree": NaN,
+      "tap_pos": -1.0,
+      "tap_phase_shifter": false,
+      "parallel": 1,
+      "df": 1.0,
+      "in_service": true,
+      "max_loading_percent": 100.0
+    },
+    "1": {
+      "name": null,
+      "std_type": null,
+      "hv_bus": 3,
+      "lv_bus": 8,
+      "sn_mva": 9900.0,
+      "vn_hv_kv": 135.0,
+      "vn_lv_kv": 0.208,
+      "vk_percent": 5506.182,
+      "vkr_percent": 0.0,
+      "pfe_kw": 0.0,
+      "i0_percent": 0.0,
+      "shift_degree": 0.0,
+      "tap_side": "hv",
+      "tap_neutral": 0.0,
+      "tap_min": NaN,
+      "tap_max": NaN,
+      "tap_step_percent": 3.1,
+      "tap_step_degree": NaN,
+      "tap_pos": -1.0,
+      "tap_phase_shifter": false,
+      "parallel": 1,
+      "df": 1.0,
+      "in_service": true,
+      "max_loading_percent": 100.0
+    },
+    "2": {
+      "name": null,
+      "std_type": null,
+      "hv_bus": 4,
+      "lv_bus": 5,
+      "sn_mva": 9900.0,
+      "vn_hv_kv": 135.0,
+      "vn_lv_kv": 0.208,
+      "vk_percent": 2494.998,
+      "vkr_percent": 0.0,
+      "pfe_kw": 0.0,
+      "i0_percent": 0.0,
+      "shift_degree": 0.0,
+      "tap_side": "hv",
+      "tap_neutral": 0.0,
+      "tap_min": NaN,
+      "tap_max": NaN,
+      "tap_step_percent": 6.8,
+      "tap_step_degree": NaN,
+      "tap_pos": -1.0,
+      "tap_phase_shifter": false,
+      "parallel": 1,
+      "df": 1.0,
+      "in_service": true,
+      "max_loading_percent": 100.0
+    },
+    "3": {
+      "name": null,
+      "std_type": null,
+      "hv_bus": 6,
+      "lv_bus": 7,
+      "sn_mva": 9900.0,
+      "vn_hv_kv": 14.0,
+      "vn_lv_kv": 12.0,
+      "vk_percent": 1743.885,
+      "vkr_percent": 0.0,
+      "pfe_kw": 0.0,
+      "i0_percent": 0.0,
+      "shift_degree": 0.0,
+      "tap_side": null,
+      "tap_neutral": NaN,
+      "tap_min": NaN,
+      "tap_max": NaN,
+      "tap_step_percent": NaN,
+      "tap_step_degree": NaN,
+      "tap_pos": NaN,
+      "tap_phase_shifter": false,
+      "parallel": 1,
+      "df": 1.0,
+      "in_service": true,
+      "max_loading_percent": 100.0
+    },
+    "4": {
+      "name": null,
+      "std_type": null,
+      "hv_bus": 6,
+      "lv_bus": 8,
+      "sn_mva": 9900.0,
+      "vn_hv_kv": 14.0,
+      "vn_lv_kv": 0.208,
+      "vk_percent": 1089.099,
+      "vkr_percent": 0.0,
+      "pfe_kw": 0.0,
+      "i0_percent": 0.0,
+      "shift_degree": 0.0,
+      "tap_side": null,
+      "tap_neutral": NaN,
+      "tap_min": NaN,
+      "tap_max": NaN,
+      "tap_step_percent": NaN,
+      "tap_step_degree": NaN,
+      "tap_pos": NaN,
+      "tap_phase_shifter": false,
+      "parallel": 1,
+      "df": 1.0,
+      "in_service": true,
+      "max_loading_percent": 100.0
+    },
+    "5": {
+      "name": "TR_25MVA_B0_B4",
+      "std_type": null,
+      "hv_bus": 0,
+      "lv_bus": 4,
+      "sn_mva": 25.0,
+      "vn_hv_kv": 13.8,
+      "vn_lv_kv": 13.8,
+      "vk_percent": 12.2,
+      "vkr_percent": 0.25,
+      "pfe_kw": 60.0,
+      "i0_percent": 0.06,
+      "shift_degree": 0.0,
+      "tap_side": "hv",
+      "tap_neutral": 0.0,
+      "tap_min": -9.0,
+      "tap_max": 9.0,
+      "tap_step_percent": 1.5,
+      "tap_step_degree": NaN,
+      "tap_pos": 0.0,
+      "tap_phase_shifter": false,
+      "parallel": 1,
+      "df": 1.0,
+      "in_service": true,
+      "max_loading_percent": NaN
+    },
+    "6": {
+      "name": "TR_25MVA_B1_B5",
+      "std_type": null,
+      "hv_bus": 1,
+      "lv_bus": 5,
+      "sn_mva": 25.0,
+      "vn_hv_kv": 13.8,
+      "vn_lv_kv": 13.8,
+      "vk_percent": 12.2,
+      "vkr_percent": 0.25,
+      "pfe_kw": 60.0,
+      "i0_percent": 0.06,
+      "shift_degree": 0.0,
+      "tap_side": "hv",
+      "tap_neutral": 0.0,
+      "tap_min": -9.0,
+      "tap_max": 9.0,
+      "tap_step_percent": 1.5,
+      "tap_step_degree": NaN,
+      "tap_pos": 0.0,
+      "tap_phase_shifter": false,
+      "parallel": 1,
+      "df": 1.0,
+      "in_service": true,
+      "max_loading_percent": NaN
+    }
+  },
+  "trafo3w": {},
+  "impedance": {},
+  "tcsc": {},
+  "dcline": {},
+  "ward": {},
+  "xward": {},
+  "measurement": {},
+  "pwl_cost": {},
+  "poly_cost": {
+    "0": {
+      "element": 0,
+      "et": "ext_grid",
+      "cp0_eur": 0.0,
+      "cp1_eur_per_mw": 20.0,
+      "cp2_eur_per_mw2": 0.0430293,
+      "cq0_eur": 0.0,
+      "cq1_eur_per_mvar": 0.0,
+      "cq2_eur_per_mvar2": 0.0
+    },
+    "1": {
+      "element": 0,
+      "et": "gen",
+      "cp0_eur": 0.0,
+      "cp1_eur_per_mw": 20.0,
+      "cp2_eur_per_mw2": 0.25,
+      "cq0_eur": 0.0,
+      "cq1_eur_per_mvar": 0.0,
+      "cq2_eur_per_mvar2": 0.0
+    },
+    "2": {
+      "element": 1,
+      "et": "gen",
+      "cp0_eur": 0.0,
+      "cp1_eur_per_mw": 40.0,
+      "cp2_eur_per_mw2": 0.01,
+      "cq0_eur": 0.0,
+      "cq1_eur_per_mvar": 0.0,
+      "cq2_eur_per_mvar2": 0.0
+    },
+    "3": {
+      "element": 2,
+      "et": "gen",
+      "cp0_eur": 0.0,
+      "cp1_eur_per_mw": 40.0,
+      "cp2_eur_per_mw2": 0.01,
+      "cq0_eur": 0.0,
+      "cq1_eur_per_mvar": 0.0,
+      "cq2_eur_per_mvar2": 0.0
+    },
+    "4": {
+      "element": 3,
+      "et": "gen",
+      "cp0_eur": 0.0,
+      "cp1_eur_per_mw": 40.0,
+      "cp2_eur_per_mw2": 0.01,
+      "cq0_eur": 0.0,
+      "cq1_eur_per_mvar": 0.0,
+      "cq2_eur_per_mvar2": 0.0
+    }
+  },
+  "characteristic": {},
+  "controller": {},
+  "group": {},
+  "line_geodata": {
+    "0": {
+      "coords": [
+        [
+          100.0,
+          0.0
+        ],
+        [
+          90.09688679024191,
+          43.388373911755814
+        ]
+      ]
+    },
+    "1": {
+      "coords": [
+        [
+          100.0,
+          0.0
+        ],
+        [
+          -22.252093395631434,
+          97.49279121818236
+        ]
+      ]
+    },
+    "2": {
+      "coords": [
+        [
+          90.09688679024191,
+          43.388373911755814
+        ],
+        [
+          62.34898018587336,
+          78.18314824680299
+        ]
+      ]
+    },
+    "3": {
+      "coords": [
+        [
+          90.09688679024191,
+          43.388373911755814
+        ],
+        [
+          22.252093395631444,
+          97.49279121818236
+        ]
+      ]
+    },
+    "4": {
+      "coords": [
+        [
+          90.09688679024191,
+          43.388373911755814
+        ],
+        [
+          -22.252093395631434,
+          97.49279121818236
+        ]
+      ]
+    },
+    "5": {
+      "coords": [
+        [
+          62.34898018587336,
+          78.18314824680299
+        ],
+        [
+          22.252093395631444,
+          97.49279121818236
+        ]
+      ]
+    },
+    "6": {
+      "coords": [
+        [
+          22.252093395631444,
+          97.49279121818236
+        ],
+        [
+          -22.252093395631434,
+          97.49279121818236
+        ]
+      ]
+    },
+    "7": {
+      "coords": [
+        [
+          -62.34898018587335,
+          78.18314824680299
+        ],
+        [
+          -22.25209339563146,
+          -97.49279121818236
+        ]
+      ]
+    },
+    "8": {
+      "coords": [
+        [
+          -62.34898018587335,
+          78.18314824680299
+        ],
+        [
+          22.252093395631423,
+          -97.49279121818236
+        ]
+      ]
+    },
+    "9": {
+      "coords": [
+        [
+          -62.34898018587335,
+          78.18314824680299
+        ],
+        [
+          62.34898018587334,
+          -78.18314824680299
+        ]
+      ]
+    },
+    "10": {
+      "coords": [
+        [
+          -90.09688679024191,
+          -43.3883739117558
+        ],
+        [
+          -62.34898018587336,
+          -78.18314824680297
+        ]
+      ]
+    },
+    "11": {
+      "coords": [
+        [
+          -90.09688679024191,
+          -43.3883739117558
+        ],
+        [
+          90.09688679024191,
+          -43.388373911755835
+        ]
+      ]
+    },
+    "12": {
+      "coords": [
+        [
+          -62.34898018587336,
+          -78.18314824680297
+        ],
+        [
+          -22.25209339563146,
+          -97.49279121818236
+        ]
+      ]
+    },
+    "13": {
+      "coords": [
+        [
+          22.252093395631423,
+          -97.49279121818236
+        ],
+        [
+          62.34898018587334,
+          -78.18314824680299
+        ]
+      ]
+    },
+    "14": {
+      "coords": [
+        [
+          62.34898018587334,
+          -78.18314824680299
+        ],
+        [
+          90.09688679024191,
+          -43.388373911755835
+        ]
+      ]
+    }
+  },
+  "bus_geodata": {
+    "0": {
+      "x": 100.0,
+      "y": 0.0
+    },
+    "1": {
+      "x": 90.09688679024191,
+      "y": 43.388373911755814
+    },
+    "2": {
+      "x": 62.34898018587336,
+      "y": 78.18314824680299
+    },
+    "3": {
+      "x": 22.252093395631444,
+      "y": 97.49279121818236
+    },
+    "4": {
+      "x": -22.252093395631434,
+      "y": 97.49279121818236
+    },
+    "5": {
+      "x": -62.34898018587335,
+      "y": 78.18314824680299
+    },
+    "6": {
+      "x": -90.09688679024191,
+      "y": 43.38837391175582
+    },
+    "7": {
+      "x": -100.0,
+      "y": 1.2246467991473532e-14
+    },
+    "8": {
+      "x": -90.09688679024191,
+      "y": -43.3883739117558
+    },
+    "9": {
+      "x": -62.34898018587336,
+      "y": -78.18314824680297
+    },
+    "10": {
+      "x": -22.25209339563146,
+      "y": -97.49279121818236
+    },
+    "11": {
+      "x": 22.252093395631423,
+      "y": -97.49279121818236
+    },
+    "12": {
+      "x": 62.34898018587334,
+      "y": -78.18314824680299
+    },
+    "13": {
+      "x": 90.09688679024191,
+      "y": -43.388373911755835
+    }
+  },
+  "_empty_res_bus": {},
+  "_empty_res_ext_grid": {},
+  "_empty_res_line": {},
+  "_empty_res_trafo": {},
+  "_empty_res_load": {},
+  "_empty_res_asymmetric_load": {},
+  "_empty_res_asymmetric_sgen": {},
+  "_empty_res_motor": {},
+  "_empty_res_sgen": {},
+  "_empty_res_shunt": {},
+  "_empty_res_svc": {},
+  "_empty_res_ssc": {},
+  "_empty_res_switch": {},
+  "_empty_res_impedance": {},
+  "_empty_res_tcsc": {},
+  "_empty_res_dcline": {},
+  "_empty_res_ward": {},
+  "_empty_res_xward": {},
+  "_empty_res_trafo_3ph": {},
+  "_empty_res_trafo3w": {},
+  "_empty_res_bus_3ph": {},
+  "_empty_res_ext_grid_3ph": {},
+  "_empty_res_line_3ph": {},
+  "_empty_res_asymmetric_load_3ph": {},
+  "_empty_res_asymmetric_sgen_3ph": {},
+  "_empty_res_storage": {},
+  "_empty_res_storage_3ph": {},
+  "_empty_res_gen": {},
+  "_empty_res_protection": {},
+  "_pd2ppc_lookups": {
+    "bus": null,
+    "ext_grid": null,
+    "gen": null,
+    "branch": null
+  },
+  "_empty_res_load_3ph": {},
+  "_empty_res_sgen_3ph": {},
+  "std_types": {
+    "line": {
+      "NAYY 4x150 SE": {
+        "type": "cs",
+        "r_ohm_per_km": 0.208,
+        "q_mm2": 150,
+        "x_ohm_per_km": 0.08,
+        "c_nf_per_km": 261.0,
+        "max_i_ka": 0.27
+      },
+      "70-AL1/11-ST1A 20.0": {
+        "type": "ol",
+        "r_ohm_per_km": 0.4132,
+        "q_mm2": 70,
+        "x_ohm_per_km": 0.36,
+        "c_nf_per_km": 9.7,
+        "max_i_ka": 0.29
+      },
+      "NA2XS2Y 1x70 RM/25 6/10 kV": {
+        "type": "cs",
+        "r_ohm_per_km": 0.443,
+        "q_mm2": 70,
+        "x_ohm_per_km": 0.123,
+        "c_nf_per_km": 280.0,
+        "max_i_ka": 0.217
+      },
+      "N2XS(FL)2Y 1x300 RM/35 64/110 kV": {
+        "type": "cs",
+        "r_ohm_per_km": 0.06,
+        "q_mm2": 300,
+        "x_ohm_per_km": 0.144,
+        "c_nf_per_km": 144.0,
+        "max_i_ka": 0.588
+      },
+      "NA2XS2Y 1x120 RM/25 6/10 kV": {
+        "type": "cs",
+        "r_ohm_per_km": 0.253,
+        "q_mm2": 120,
+        "x_ohm_per_km": 0.113,
+        "c_nf_per_km": 340.0,
+        "max_i_ka": 0.28
+      },
+      "149-AL1/24-ST1A 10.0": {
+        "type": "ol",
+        "r_ohm_per_km": 0.194,
+        "q_mm2": 149,
+        "x_ohm_per_km": 0.315,
+        "c_nf_per_km": 11.25,
+        "max_i_ka": 0.47
+      },
+      "15-AL1/3-ST1A 0.4": {
+        "type": "ol",
+        "r_ohm_per_km": 1.8769,
+        "q_mm2": 16,
+        "x_ohm_per_km": 0.35,
+        "c_nf_per_km": 11.0,
+        "max_i_ka": 0.105
+      },
+      "NA2XS2Y 1x185 RM/25 6/10 kV": {
+        "type": "cs",
+        "r_ohm_per_km": 0.161,
+        "q_mm2": 185,
+        "x_ohm_per_km": 0.11,
+        "c_nf_per_km": 406.0,
+        "max_i_ka": 0.358
+      },
+      "NA2XS2Y 1x240 RM/25 6/10 kV": {
+        "type": "cs",
+        "r_ohm_per_km": 0.122,
+        "q_mm2": 240,
+        "x_ohm_per_km": 0.105,
+        "c_nf_per_km": 456.0,
+        "max_i_ka": 0.416
+      },
+      "N2XS(FL)2Y 1x240 RM/35 64/110 kV": {
+        "type": "cs",
+        "r_ohm_per_km": 0.075,
+        "q_mm2": 240,
+        "x_ohm_per_km": 0.149,
+        "c_nf_per_km": 135.0,
+        "max_i_ka": 0.526
+      },
+      "NAYY 4x120 SE": {
+        "type": "cs",
+        "r_ohm_per_km": 0.225,
+        "q_mm2": 120,
+        "x_ohm_per_km": 0.08,
+        "c_nf_per_km": 264.0,
+        "max_i_ka": 0.242
+      },
+      "48-AL1/8-ST1A 10.0": {
+        "type": "ol",
+        "r_ohm_per_km": 0.5939,
+        "q_mm2": 48,
+        "x_ohm_per_km": 0.35,
+        "c_nf_per_km": 10.1,
+        "max_i_ka": 0.21
+      },
+      "94-AL1/15-ST1A 10.0": {
+        "type": "ol",
+        "r_ohm_per_km": 0.306,
+        "q_mm2": 94,
+        "x_ohm_per_km": 0.33,
+        "c_nf_per_km": 10.75,
+        "max_i_ka": 0.35
+      },
+      "NA2XS2Y 1x70 RM/25 12/20 kV": {
+        "type": "cs",
+        "r_ohm_per_km": 0.443,
+        "q_mm2": 70,
+        "x_ohm_per_km": 0.132,
+        "c_nf_per_km": 190.0,
+        "max_i_ka": 0.22
+      },
+      "243-AL1/39-ST1A 20.0": {
+        "type": "ol",
+        "r_ohm_per_km": 0.1188,
+        "q_mm2": 243,
+        "x_ohm_per_km": 0.32,
+        "c_nf_per_km": 11.0,
+        "max_i_ka": 0.645
+      },
+      "NA2XS2Y 1x150 RM/25 6/10 kV": {
+        "type": "cs",
+        "r_ohm_per_km": 0.206,
+        "q_mm2": 150,
+        "x_ohm_per_km": 0.11,
+        "c_nf_per_km": 360.0,
+        "max_i_ka": 0.315
+      },
+      "184-AL1/30-ST1A 110.0": {
+        "type": "ol",
+        "r_ohm_per_km": 0.1571,
+        "q_mm2": 184,
+        "x_ohm_per_km": 0.4,
+        "c_nf_per_km": 8.8,
+        "max_i_ka": 0.535
+      },
+      "149-AL1/24-ST1A 110.0": {
+        "type": "ol",
+        "r_ohm_per_km": 0.194,
+        "q_mm2": 149,
+        "x_ohm_per_km": 0.41,
+        "c_nf_per_km": 8.75,
+        "max_i_ka": 0.47
+      },
+      "NA2XS2Y 1x240 RM/25 12/20 kV": {
+        "type": "cs",
+        "r_ohm_per_km": 0.122,
+        "q_mm2": 240,
+        "x_ohm_per_km": 0.112,
+        "c_nf_per_km": 304.0,
+        "max_i_ka": 0.421
+      },
+      "122-AL1/20-ST1A 20.0": {
+        "type": "ol",
+        "r_ohm_per_km": 0.2376,
+        "q_mm2": 122,
+        "x_ohm_per_km": 0.344,
+        "c_nf_per_km": 10.3,
+        "max_i_ka": 0.41
+      },
+      "48-AL1/8-ST1A 20.0": {
+        "type": "ol",
+        "r_ohm_per_km": 0.5939,
+        "q_mm2": 48,
+        "x_ohm_per_km": 0.372,
+        "c_nf_per_km": 9.5,
+        "max_i_ka": 0.21
+      },
+      "34-AL1/6-ST1A 10.0": {
+        "type": "ol",
+        "r_ohm_per_km": 0.8342,
+        "q_mm2": 34,
+        "x_ohm_per_km": 0.36,
+        "c_nf_per_km": 9.7,
+        "max_i_ka": 0.17
+      },
+      "24-AL1/4-ST1A 0.4": {
+        "type": "ol",
+        "r_ohm_per_km": 1.2012,
+        "q_mm2": 24,
+        "x_ohm_per_km": 0.335,
+        "c_nf_per_km": 11.25,
+        "max_i_ka": 0.14
+      },
+      "184-AL1/30-ST1A 20.0": {
+        "type": "ol",
+        "r_ohm_per_km": 0.1571,
+        "q_mm2": 184,
+        "x_ohm_per_km": 0.33,
+        "c_nf_per_km": 10.75,
+        "max_i_ka": 0.535
+      },
+      "94-AL1/15-ST1A 20.0": {
+        "type": "ol",
+        "r_ohm_per_km": 0.306,
+        "q_mm2": 94,
+        "x_ohm_per_km": 0.35,
+        "c_nf_per_km": 10.0,
+        "max_i_ka": 0.35
+      },
+      "NAYY 4x50 SE": {
+        "type": "cs",
+        "r_ohm_per_km": 0.642,
+        "q_mm2": 50,
+        "x_ohm_per_km": 0.083,
+        "c_nf_per_km": 210.0,
+        "max_i_ka": 0.142
+      },
+      "490-AL1/64-ST1A 380.0": {
+        "type": "ol",
+        "r_ohm_per_km": 0.059,
+        "q_mm2": 490,
+        "x_ohm_per_km": 0.253,
+        "c_nf_per_km": 11.0,
+        "max_i_ka": 0.96
+      },
+      "48-AL1/8-ST1A 0.4": {
+        "type": "ol",
+        "r_ohm_per_km": 0.5939,
+        "q_mm2": 48,
+        "x_ohm_per_km": 0.3,
+        "c_nf_per_km": 12.2,
+        "max_i_ka": 0.21
+      },
+      "NA2XS2Y 1x95 RM/25 6/10 kV": {
+        "type": "cs",
+        "r_ohm_per_km": 0.313,
+        "q_mm2": 95,
+        "x_ohm_per_km": 0.123,
+        "c_nf_per_km": 315.0,
+        "max_i_ka": 0.249
+      },
+      "NA2XS2Y 1x120 RM/25 12/20 kV": {
+        "type": "cs",
+        "r_ohm_per_km": 0.253,
+        "q_mm2": 120,
+        "x_ohm_per_km": 0.119,
+        "c_nf_per_km": 230.0,
+        "max_i_ka": 0.283
+      },
+      "34-AL1/6-ST1A 20.0": {
+        "type": "ol",
+        "r_ohm_per_km": 0.8342,
+        "q_mm2": 34,
+        "x_ohm_per_km": 0.382,
+        "c_nf_per_km": 9.15,
+        "max_i_ka": 0.17
+      },
+      "94-AL1/15-ST1A 0.4": {
+        "type": "ol",
+        "r_ohm_per_km": 0.306,
+        "q_mm2": 94,
+        "x_ohm_per_km": 0.29,
+        "c_nf_per_km": 13.2,
+        "max_i_ka": 0.35
+      },
+      "NA2XS2Y 1x185 RM/25 12/20 kV": {
+        "type": "cs",
+        "r_ohm_per_km": 0.161,
+        "q_mm2": 185,
+        "x_ohm_per_km": 0.117,
+        "c_nf_per_km": 273.0,
+        "max_i_ka": 0.362
+      },
+      "NA2XS2Y 1x150 RM/25 12/20 kV": {
+        "type": "cs",
+        "r_ohm_per_km": 0.206,
+        "q_mm2": 150,
+        "x_ohm_per_km": 0.116,
+        "c_nf_per_km": 250.0,
+        "max_i_ka": 0.319
+      },
+      "243-AL1/39-ST1A 110.0": {
+        "type": "ol",
+        "r_ohm_per_km": 0.1188,
+        "q_mm2": 243,
+        "x_ohm_per_km": 0.39,
+        "c_nf_per_km": 9.0,
+        "max_i_ka": 0.645
+      },
+      "490-AL1/64-ST1A 220.0": {
+        "type": "ol",
+        "r_ohm_per_km": 0.059,
+        "q_mm2": 490,
+        "x_ohm_per_km": 0.285,
+        "c_nf_per_km": 10.0,
+        "max_i_ka": 0.96
+      },
+      "N2XS(FL)2Y 1x185 RM/35 64/110 kV": {
+        "type": "cs",
+        "r_ohm_per_km": 0.099,
+        "q_mm2": 185,
+        "x_ohm_per_km": 0.156,
+        "c_nf_per_km": 125.0,
+        "max_i_ka": 0.457
+      },
+      "N2XS(FL)2Y 1x120 RM/35 64/110 kV": {
+        "type": "cs",
+        "r_ohm_per_km": 0.153,
+        "q_mm2": 120,
+        "x_ohm_per_km": 0.166,
+        "c_nf_per_km": 112.0,
+        "max_i_ka": 0.366
+      },
+      "NA2XS2Y 1x95 RM/25 12/20 kV": {
+        "type": "cs",
+        "r_ohm_per_km": 0.313,
+        "q_mm2": 95,
+        "x_ohm_per_km": 0.132,
+        "c_nf_per_km": 216.0,
+        "max_i_ka": 0.252
+      },
+      "122-AL1/20-ST1A 10.0": {
+        "type": "ol",
+        "r_ohm_per_km": 0.2376,
+        "q_mm2": 122,
+        "x_ohm_per_km": 0.323,
+        "c_nf_per_km": 11.1,
+        "max_i_ka": 0.41
+      },
+      "149-AL1/24-ST1A 20.0": {
+        "type": "ol",
+        "r_ohm_per_km": 0.194,
+        "q_mm2": 149,
+        "x_ohm_per_km": 0.337,
+        "c_nf_per_km": 10.5,
+        "max_i_ka": 0.47
+      },
+      "70-AL1/11-ST1A 10.0": {
+        "type": "ol",
+        "r_ohm_per_km": 0.4132,
+        "q_mm2": 70,
+        "x_ohm_per_km": 0.339,
+        "c_nf_per_km": 10.4,
+        "max_i_ka": 0.29
+      },
+      "305-AL1/39-ST1A 110.0": {
+        "type": "ol",
+        "r_ohm_per_km": 0.0949,
+        "q_mm2": 305,
+        "x_ohm_per_km": 0.38,
+        "c_nf_per_km": 9.2,
+        "max_i_ka": 0.74
+      }
+    },
+    "trafo": {
+      "0.4 MVA 20/0.4 kV": {
+        "shift_degree": 150,
+        "vector_group": "Dyn5",
+        "vn_hv_kv": 20.0,
+        "pfe_kw": 1.35,
+        "i0_percent": 0.3375,
+        "vn_lv_kv": 0.4,
+        "sn_mva": 0.4,
+        "tap_step_degree": 0,
+        "tap_neutral": 0,
+        "tap_min": -2,
+        "vkr_percent": 1.425,
+        "tap_step_percent": 2.5,
+        "tap_side": "hv",
+        "tap_phase_shifter": false,
+        "tap_max": 2,
+        "vk_percent": 6.0
+      },
+      "63 MVA 110/20 kV v1.4.3 and older": {
+        "shift_degree": 150,
+        "vector_group": "YNd5",
+        "vn_hv_kv": 110.0,
+        "pfe_kw": 33.0,
+        "i0_percent": 0.086,
+        "vn_lv_kv": 20.0,
+        "sn_mva": 63.0,
+        "tap_step_degree": 0,
+        "tap_neutral": 0,
+        "tap_min": -9,
+        "vkr_percent": 0.322,
+        "tap_step_percent": 1.5,
+        "tap_side": "hv",
+        "tap_phase_shifter": false,
+        "tap_max": 9,
+        "vk_percent": 11.2
+      },
+      "63 MVA 110/10 kV v1.4.3 and older": {
+        "shift_degree": 150,
+        "vector_group": "YNd5",
+        "vn_hv_kv": 110.0,
+        "pfe_kw": 31.51,
+        "i0_percent": 0.078,
+        "vn_lv_kv": 10.0,
+        "sn_mva": 63.0,
+        "tap_step_degree": 0,
+        "tap_neutral": 0,
+        "tap_min": -9,
+        "vkr_percent": 0.31,
+        "tap_step_percent": 1.5,
+        "tap_side": "hv",
+        "tap_phase_shifter": false,
+        "tap_max": 9,
+        "vk_percent": 10.04
+      },
+      "25 MVA 110/20 kV v1.4.3 and older": {
+        "shift_degree": 150,
+        "vector_group": "YNd5",
+        "vn_hv_kv": 110.0,
+        "pfe_kw": 29.0,
+        "i0_percent": 0.071,
+        "vn_lv_kv": 20.0,
+        "sn_mva": 25.0,
+        "tap_step_degree": 0,
+        "tap_neutral": 0,
+        "tap_min": -9,
+        "vkr_percent": 0.282,
+        "tap_step_percent": 1.5,
+        "tap_side": "hv",
+        "tap_phase_shifter": false,
+        "tap_max": 9,
+        "vk_percent": 11.2
+      },
+      "40 MVA 110/20 kV v1.4.3 and older": {
+        "shift_degree": 150,
+        "vector_group": "YNd5",
+        "vn_hv_kv": 110.0,
+        "pfe_kw": 31.0,
+        "i0_percent": 0.08,
+        "vn_lv_kv": 20.0,
+        "sn_mva": 40.0,
+        "tap_step_degree": 0,
+        "tap_neutral": 0,
+        "tap_min": -9,
+        "vkr_percent": 0.302,
+        "tap_step_percent": 1.5,
+        "tap_side": "hv",
+        "tap_phase_shifter": false,
+        "tap_max": 9,
+        "vk_percent": 11.2
+      },
+      "0.25 MVA 20/0.4 kV": {
+        "shift_degree": 150,
+        "vector_group": "Yzn5",
+        "vn_hv_kv": 20.0,
+        "pfe_kw": 0.8,
+        "i0_percent": 0.32,
+        "vn_lv_kv": 0.4,
+        "sn_mva": 0.25,
+        "tap_step_degree": 0,
+        "tap_neutral": 0,
+        "tap_min": -2,
+        "vkr_percent": 1.44,
+        "tap_step_percent": 2.5,
+        "tap_side": "hv",
+        "tap_phase_shifter": false,
+        "tap_max": 2,
+        "vk_percent": 6.0
+      },
+      "25 MVA 110/10 kV v1.4.3 and older": {
+        "shift_degree": 150,
+        "vector_group": "YNd5",
+        "vn_hv_kv": 110.0,
+        "pfe_kw": 28.51,
+        "i0_percent": 0.073,
+        "vn_lv_kv": 10.0,
+        "sn_mva": 25.0,
+        "tap_step_degree": 0,
+        "tap_neutral": 0,
+        "tap_min": -9,
+        "vkr_percent": 0.276,
+        "tap_step_percent": 1.5,
+        "tap_side": "hv",
+        "tap_phase_shifter": false,
+        "tap_max": 9,
+        "vk_percent": 10.04
+      },
+      "0.25 MVA 10/0.4 kV": {
+        "shift_degree": 150,
+        "vector_group": "Dyn5",
+        "vn_hv_kv": 10.0,
+        "pfe_kw": 0.6,
+        "i0_percent": 0.24,
+        "vn_lv_kv": 0.4,
+        "sn_mva": 0.25,
+        "tap_step_degree": 0,
+        "tap_neutral": 0,
+        "tap_min": -2,
+        "vkr_percent": 1.2,
+        "tap_step_percent": 2.5,
+        "tap_side": "hv",
+        "tap_phase_shifter": false,
+        "tap_max": 2,
+        "vk_percent": 4.0
+      },
+      "160 MVA 380/110 kV": {
+        "shift_degree": 0,
+        "vector_group": "Yy0",
+        "vn_hv_kv": 380.0,
+        "pfe_kw": 60.0,
+        "i0_percent": 0.06,
+        "vn_lv_kv": 110.0,
+        "sn_mva": 160.0,
+        "tap_step_degree": 0,
+        "tap_neutral": 0,
+        "tap_min": -9,
+        "vkr_percent": 0.25,
+        "tap_step_percent": 1.5,
+        "tap_side": "hv",
+        "tap_phase_shifter": false,
+        "tap_max": 9,
+        "vk_percent": 12.2
+      },
+      "63 MVA 110/10 kV": {
+        "shift_degree": 150,
+        "vector_group": "YNd5",
+        "vn_hv_kv": 110.0,
+        "pfe_kw": 22.0,
+        "i0_percent": 0.04,
+        "vn_lv_kv": 10.0,
+        "sn_mva": 63.0,
+        "tap_step_degree": 0,
+        "tap_neutral": 0,
+        "tap_min": -9,
+        "vkr_percent": 0.32,
+        "tap_step_percent": 1.5,
+        "tap_side": "hv",
+        "tap_phase_shifter": false,
+        "tap_max": 9,
+        "vk_percent": 18.0
+      },
+      "0.63 MVA 20/0.4 kV": {
+        "shift_degree": 150,
+        "vector_group": "Dyn5",
+        "vn_hv_kv": 20.0,
+        "pfe_kw": 1.65,
+        "i0_percent": 0.2619,
+        "vn_lv_kv": 0.4,
+        "sn_mva": 0.63,
+        "tap_step_degree": 0,
+        "tap_neutral": 0,
+        "tap_min": -2,
+        "vkr_percent": 1.206,
+        "tap_step_percent": 2.5,
+        "tap_side": "hv",
+        "tap_phase_shifter": false,
+        "tap_max": 2,
+        "vk_percent": 6.0
+      },
+      "0.4 MVA 10/0.4 kV": {
+        "shift_degree": 150,
+        "vector_group": "Dyn5",
+        "vn_hv_kv": 10.0,
+        "pfe_kw": 0.95,
+        "i0_percent": 0.2375,
+        "vn_lv_kv": 0.4,
+        "sn_mva": 0.4,
+        "tap_step_degree": 0,
+        "tap_neutral": 0,
+        "tap_min": -2,
+        "vkr_percent": 1.325,
+        "tap_step_percent": 2.5,
+        "tap_side": "hv",
+        "tap_phase_shifter": false,
+        "tap_max": 2,
+        "vk_percent": 4.0
+      },
+      "0.63 MVA 10/0.4 kV": {
+        "shift_degree": 150,
+        "vector_group": "Dyn5",
+        "vn_hv_kv": 10.0,
+        "pfe_kw": 1.18,
+        "i0_percent": 0.1873,
+        "vn_lv_kv": 0.4,
+        "sn_mva": 0.63,
+        "tap_step_degree": 0,
+        "tap_neutral": 0,
+        "tap_min": -2,
+        "vkr_percent": 1.0794,
+        "tap_step_percent": 2.5,
+        "tap_side": "hv",
+        "tap_phase_shifter": false,
+        "tap_max": 2,
+        "vk_percent": 4.0
+      },
+      "63 MVA 110/20 kV": {
+        "shift_degree": 150,
+        "vector_group": "YNd5",
+        "vn_hv_kv": 110.0,
+        "pfe_kw": 22.0,
+        "i0_percent": 0.04,
+        "vn_lv_kv": 20.0,
+        "sn_mva": 63.0,
+        "tap_step_degree": 0,
+        "tap_neutral": 0,
+        "tap_min": -9,
+        "vkr_percent": 0.32,
+        "tap_step_percent": 1.5,
+        "tap_side": "hv",
+        "tap_phase_shifter": false,
+        "tap_max": 9,
+        "vk_percent": 18.0
+      },
+      "100 MVA 220/110 kV": {
+        "shift_degree": 0,
+        "vector_group": "Yy0",
+        "vn_hv_kv": 220.0,
+        "pfe_kw": 55.0,
+        "i0_percent": 0.06,
+        "vn_lv_kv": 110.0,
+        "sn_mva": 100.0,
+        "tap_step_degree": 0,
+        "tap_neutral": 0,
+        "tap_min": -9,
+        "vkr_percent": 0.26,
+        "tap_step_percent": 1.5,
+        "tap_side": "hv",
+        "tap_phase_shifter": false,
+        "tap_max": 9,
+        "vk_percent": 12.0
+      },
+      "25 MVA 110/10 kV": {
+        "shift_degree": 150,
+        "vector_group": "YNd5",
+        "vn_hv_kv": 110.0,
+        "pfe_kw": 14.0,
+        "i0_percent": 0.07,
+        "vn_lv_kv": 10.0,
+        "sn_mva": 25.0,
+        "tap_step_degree": 0,
+        "tap_neutral": 0,
+        "tap_min": -9,
+        "vkr_percent": 0.41,
+        "tap_step_percent": 1.5,
+        "tap_side": "hv",
+        "tap_phase_shifter": false,
+        "tap_max": 9,
+        "vk_percent": 12.0
+      },
+      "40 MVA 110/20 kV": {
+        "shift_degree": 150,
+        "vector_group": "YNd5",
+        "vn_hv_kv": 110.0,
+        "pfe_kw": 18.0,
+        "i0_percent": 0.05,
+        "vn_lv_kv": 20.0,
+        "sn_mva": 40.0,
+        "tap_step_degree": 0,
+        "tap_neutral": 0,
+        "tap_min": -9,
+        "vkr_percent": 0.34,
+        "tap_step_percent": 1.5,
+        "tap_side": "hv",
+        "tap_phase_shifter": false,
+        "tap_max": 9,
+        "vk_percent": 16.2
+      },
+      "40 MVA 110/10 kV v1.4.3 and older": {
+        "shift_degree": 150,
+        "vector_group": "YNd5",
+        "vn_hv_kv": 110.0,
+        "pfe_kw": 30.45,
+        "i0_percent": 0.076,
+        "vn_lv_kv": 10.0,
+        "sn_mva": 40.0,
+        "tap_step_degree": 0,
+        "tap_neutral": 0,
+        "tap_min": -9,
+        "vkr_percent": 0.295,
+        "tap_step_percent": 1.5,
+        "tap_side": "hv",
+        "tap_phase_shifter": false,
+        "tap_max": 9,
+        "vk_percent": 10.04
+      },
+      "25 MVA 110/20 kV": {
+        "shift_degree": 150,
+        "vector_group": "YNd5",
+        "vn_hv_kv": 110.0,
+        "pfe_kw": 14.0,
+        "i0_percent": 0.07,
+        "vn_lv_kv": 20.0,
+        "sn_mva": 25.0,
+        "tap_step_degree": 0,
+        "tap_neutral": 0,
+        "tap_min": -9,
+        "vkr_percent": 0.41,
+        "tap_step_percent": 1.5,
+        "tap_side": "hv",
+        "tap_phase_shifter": false,
+        "tap_max": 9,
+        "vk_percent": 12.0
+      },
+      "40 MVA 110/10 kV": {
+        "shift_degree": 150,
+        "vector_group": "YNd5",
+        "vn_hv_kv": 110.0,
+        "pfe_kw": 18.0,
+        "i0_percent": 0.05,
+        "vn_lv_kv": 10.0,
+        "sn_mva": 40.0,
+        "tap_step_degree": 0,
+        "tap_neutral": 0,
+        "tap_min": -9,
+        "vkr_percent": 0.34,
+        "tap_step_percent": 1.5,
+        "tap_side": "hv",
+        "tap_phase_shifter": false,
+        "tap_max": 9,
+        "vk_percent": 16.2
+      }
+    },
+    "trafo3w": {
+      "63/25/38 MVA 110/10/10 kV": {
+        "vector_group": "YN0yn0yn0",
+        "vn_mv_kv": 10,
+        "vn_lv_kv": 10,
+        "shift_lv_degree": 0,
+        "shift_mv_degree": 0,
+        "pfe_kw": 35,
+        "vn_hv_kv": 110,
+        "i0_percent": 0.89,
+        "sn_lv_mva": 38.0,
+        "sn_hv_mva": 63.0,
+        "sn_mv_mva": 25.0,
+        "vkr_lv_percent": 0.35,
+        "tap_neutral": 0,
+        "tap_min": -10,
+        "vk_mv_percent": 10.4,
+        "vkr_hv_percent": 0.28,
+        "vk_lv_percent": 10.4,
+        "tap_max": 10,
+        "vkr_mv_percent": 0.32,
+        "tap_step_percent": 1.2,
+        "tap_side": "hv",
+        "vk_hv_percent": 10.4
+      },
+      "63/25/38 MVA 110/20/10 kV": {
+        "vector_group": "YN0yn0yn0",
+        "vn_mv_kv": 20,
+        "vn_lv_kv": 10,
+        "shift_lv_degree": 0,
+        "shift_mv_degree": 0,
+        "pfe_kw": 35,
+        "vn_hv_kv": 110,
+        "i0_percent": 0.89,
+        "sn_lv_mva": 38.0,
+        "sn_hv_mva": 63.0,
+        "sn_mv_mva": 25.0,
+        "vkr_lv_percent": 0.35,
+        "tap_neutral": 0,
+        "tap_min": -10,
+        "vk_mv_percent": 10.4,
+        "vkr_hv_percent": 0.28,
+        "vk_lv_percent": 10.4,
+        "tap_max": 10,
+        "vkr_mv_percent": 0.32,
+        "tap_step_percent": 1.2,
+        "tap_side": "hv",
+        "vk_hv_percent": 10.4
+      }
+    },
+    "fuse": {}
+  },
+  "res_bus": {},
+  "res_line": {},
+  "res_trafo": {},
+  "res_trafo3w": {},
+  "res_impedance": {},
+  "res_ext_grid": {},
+  "res_load": {},
+  "res_motor": {},
+  "res_sgen": {},
+  "res_storage": {},
+  "res_shunt": {},
+  "res_gen": {},
+  "res_ward": {},
+  "res_xward": {},
+  "res_dcline": {},
+  "res_asymmetric_load": {},
+  "res_asymmetric_sgen": {},
+  "res_switch": {},
+  "res_tcsc": {},
+  "res_svc": {},
+  "res_ssc": {},
+  "res_bus_est": {},
+  "res_line_est": {},
+  "res_trafo_est": {},
+  "res_trafo3w_est": {},
+  "res_impedance_est": {},
+  "res_switch_est": {},
+  "res_bus_sc": {},
+  "res_line_sc": {},
+  "res_trafo_sc": {},
+  "res_trafo3w_sc": {},
+  "res_ext_grid_sc": {},
+  "res_gen_sc": {},
+  "res_sgen_sc": {},
+  "res_switch_sc": {},
+  "res_bus_3ph": {},
+  "res_line_3ph": {},
+  "res_trafo_3ph": {},
+  "res_ext_grid_3ph": {},
+  "res_shunt_3ph": {},
+  "res_load_3ph": {},
+  "res_sgen_3ph": {},
+  "res_storage_3ph": {},
+  "res_asymmetric_load_3ph": {},
+  "res_asymmetric_sgen_3ph": {},
+  "user_pf_options": {},
+  "protection_devices": {
+    "reles": [
+      {
+        "tipo": "51",
+        "nome": "RELE_51_B3_B4",
+        "barras": [
+          3,
+          4
+        ]
+      },
+      {
+        "tipo": "51",
+        "nome": "RELE_51_B4_B5",
+        "barras": [
+          4,
+          5
+        ]
+      },
+      {
+        "tipo": "51",
+        "nome": "RELE_51_B5_B6",
+        "barras": [
+          5,
+          6
+        ]
+      },
+      {
+        "tipo": "51",
+        "nome": "RELE_51_B6_B13",
+        "barras": [
+          6,
+          13
+        ]
+      },
+      {
+        "tipo": "67",
+        "nome": "RELE_67_B2",
+        "barras": [
+          2
+        ]
+      },
+      {
+        "tipo": "67",
+        "nome": "RELE_67_B3",
+        "barras": [
+          3
+        ]
+      },
+      {
+        "tipo": "67",
+        "nome": "RELE_67_B6",
+        "barras": [
+          6
+        ]
+      },
+      {
+        "tipo": "87T",
+        "nome": "RELE_87T_B2_B4",
+        "barras": [
+          2,
+          4
+        ],
+        "element_type": "trafo",
+        "element_id": 0
+      },
+      {
+        "tipo": "87T",
+        "nome": "RELE_87T_B4_B5",
+        "barras": [
+          4,
+          5
+        ],
+        "element_type": "trafo",
+        "element_id": 1
+      },
+      {
+        "tipo": "27_59",
+        "nome": "RELE_27_59_B7",
+        "barras": [
+          7
+        ]
+      },
+      {
+        "tipo": "27_59",
+        "nome": "RELE_27_59_B9",
+        "barras": [
+          9
+        ]
+      },
+      {
+        "tipo": "27_59",
+        "nome": "RELE_27_59_B10",
+        "barras": [
+          10
+        ]
+      },
+      {
+        "tipo": "27_59",
+        "nome": "RELE_27_59_B14",
+        "barras": [
+          14
+        ]
+      }
+    ],
+    "disjuntores": [
+      {
+        "nome": "DISJ_B4",
+        "barra": 4,
+        "element_type": "bus",
+        "element_id": 4
+      },
+      {
+        "nome": "DISJ_B5",
+        "barra": 5,
+        "element_type": "bus",
+        "element_id": 5
+      },
+      {
+        "nome": "DISJ_B6",
+        "barra": 6,
+        "element_type": "bus",
+        "element_id": 6
+      },
+      {
+        "nome": "DISJ_G1",
+        "gerador": 1,
+        "element_type": "gen",
+        "element_id": 0
+      },
+      {
+        "nome": "DISJ_G2",
+        "gerador": 2,
+        "element_type": "gen",
+        "element_id": 1
+      }
+    ],
+    "fusiveis": [
+      {
+        "nome": "FUSIVEL_B7",
+        "barra": 7,
+        "element_type": "bus",
+        "element_id": 7
+      },
+      {
+        "nome": "FUSIVEL_B9",
+        "barra": 9,
+        "element_type": "bus",
+        "element_id": 9
+      },
+      {
+        "nome": "FUSIVEL_B10",
+        "barra": 10,
+        "element_type": "bus",
+        "element_id": 10
+      },
+      {
+        "nome": "FUSIVEL_B14",
+        "barra": 14,
+        "element_type": "bus",
+        "element_id": 14
+      }
+    ]
+  }
+}
