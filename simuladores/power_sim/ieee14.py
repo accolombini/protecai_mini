@@ -1,84 +1,60 @@
-"""
-Módulo de definição do sistema IEEE 14 barras.
-Gera a rede utilizando a API moderna do pandapower.
-"""
-
 from pathlib import Path
 import pandapower as pp
+import os
+import time
 
 
 class IEEE14System:
     """
-    Classe para gerar e exportar o sistema IEEE 14 barras.
+    Classe responsável por carregar e disponibilizar o sistema IEEE 14 Barras
+    com dispositivos de proteção modelados (relés, disjuntores, transformadores, etc).
+
+    O arquivo JSON é carregado a partir do diretório "simuladores/power_sim/data",
+    garantindo compatibilidade com a versão 2.14.1 do Pandapower.
     """
 
     def __init__(self):
         """
-        Inicializa o objeto com a rede IEEE 14 importada de JSON.
-
-        Observação:
-        Caso deseje construir a rede programaticamente,
-        utilize o método interno `_create_ieee14()`.
+        Inicializa a instância carregando a topologia elétrica a partir de um arquivo JSON
+        gerado previamente por `to_json()` do pandapower.
+        Inclui verificação se o arquivo está disponível localmente ou em cache do iCloud.
         """
-        path = Path(__file__).resolve().parent / "data" / "ieee14.json"
-        self.net = pp.from_json(str(path))
+        path = Path(__file__).resolve().parent / \
+            "data" / "ieee14_protecao.json"
 
-        # Elimina warnings relacionados à ausência de tap_dependency_table
-        self._inicializar_tap_config()
+        # Se o arquivo estiver em cache do iCloud (ainda não baixado), forçamos o download
+        if not path.exists():
+            icloud_stub = path.with_suffix(path.suffix + ".icloud")
+            if icloud_stub.exists():
+                print("⚠️ Arquivo está na nuvem. Solicitando download do iCloud...")
+                os.system(f"brctl download '{path}'")
+                for _ in range(10):  # Aguarda até 5 segundos (0.5 * 10)
+                    if path.exists():
+                        break
+                    time.sleep(0.5)
 
-    def _inicializar_tap_config(self):
-        """
-        Inicializa a estrutura de TAP na rede para prevenir warnings deprecatórios.
-        """
-        if 'tap_dependency_table' not in self.net:
-            self.net['tap_dependency_table'] = {}
+        if not path.exists():
+            raise FileNotFoundError(
+                f"Arquivo JSON não encontrado ou não foi baixado: {path}")
 
-        if 'trafo' in self.net and not self.net.trafo.empty:
-            for tid in self.net.trafo.index:
-                self.net.trafo.at[tid, 'tap_side'] = 'hv'
-                self.net.trafo.at[tid, 'tap_step_percent'] = 0.0
-                self.net.trafo.at[tid, 'tap_pos'] = 0
-                self.net.trafo.at[tid, 'tap_neutral'] = 0
-                self.net.trafo.at[tid, 'tap_min'] = 0
-                self.net.trafo.at[tid, 'tap_max'] = 0
-
-    def _create_ieee14(self):
-        """
-        Cria o sistema IEEE 14 com base em parâmetros simplificados.
-
-        Returns:
-            pp.pandapowerNet: Objeto da rede.
-        """
-        net = pp.create_empty_network()
-
-        # Exemplo simplificado — substitua por dados reais
-        b1 = pp.create_bus(net, vn_kv=132)
-        b2 = pp.create_bus(net, vn_kv=132)
-        pp.create_line_from_parameters(net, b1, b2, length_km=1.0,
-                                       r_ohm_per_km=0.1, x_ohm_per_km=0.2,
-                                       c_nf_per_km=10, max_i_ka=0.4)
-        pp.create_ext_grid(net, bus=b1, vm_pu=1.02, name="Grid Connection")
-        pp.create_load(net, bus=b2, p_mw=20, q_mvar=5, name="Load Bus 2")
-
-        # Inserção preventiva de estrutura de TAP
-        net['tap_dependency_table'] = {}
-
-        return net
-
-    def export(self, path: str):
-        """
-        Exporta a rede para um arquivo JSON.
-
-        Args:
-            path (str): Caminho completo do arquivo de destino.
-        """
-        pp.to_json(self.net, path)
+        try:
+            # Carrega o JSON customizado
+            import json
+            with open(path, 'r', encoding='utf-8') as f:
+                data = json.load(f)
+            
+            # Extrai a rede PandaPower da string JSON
+            self.net = pp.from_json_string(data["pandapower_net"])
+        except Exception as e:
+            raise ValueError(
+                f"Erro ao carregar a rede a partir do JSON. Verifique se foi exportado corretamente\nDetalhes: {e}"
+            )
 
     def get_network(self):
         """
-        Retorna a rede pandapower carregada.
+        Retorna o objeto `net` do pandapower com todos os dados carregados.
 
         Returns:
-            pp.pandapowerNet: Objeto da rede.
+            pandapowerNet: Rede elétrica completa com os dispositivos modelados.
         """
         return self.net

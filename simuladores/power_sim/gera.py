@@ -1,18 +1,18 @@
 """
-    
-ProtecAI_MINI - Gerador de Topologia e Dados de Proteção (.json)
-
+ProtecAI - Gerador de Topologia e Dados de Proteção (.json)
+-----------------------------------------------------------
 Gera um arquivo .json LIMPO e padronizado para uso nos scripts de visualização e simulação ProtecAI.
 
-    ||>Padrão de exportação:
-        - "pandapower_net": string serializada (via pp.to_json)
-        - "protection_devices": dicionário (relés, disjuntores, fusíveis)
-        - "bus_geodata": dicionário {índice: {x, y}}
-        - "line_geodata": dicionário {índice: {"coords": [...]}}
-        |> NÃO exporta curvas, resultados, nem artefatos IEEE.
+Padrão de exportação:
+- "pandapower_net": string serializada (via pp.to_json)
+- "protection_devices": dicionário (relés, disjuntores, fusíveis)
+- "bus_geodata": dicionário {índice: {x, y}}
+- "line_geodata": dicionário {índice: {"coords": [...]}}
+NÃO exporta curvas, resultados, nem artefatos IEEE.
 
-    ||>Compatível com Pandapower 3.1.2+, Pandas 1.x+, Python 3.8+
+Compatível com Pandapower 3.1.2+, Pandas 1.x+, Python 3.8+
 
+Autor: Code GPT / Petrobras-UFF-ProtecAI
 """
 
 import pandapower as pp
@@ -23,10 +23,8 @@ from pathlib import Path
 from typing import Dict, Tuple
 
 # ====== PARÂMETROS E CONSTANTES ======
-# Conforme especificação do projeto PETRO_PROTECAI_MINI
-TRAFO_SN_MVA = 25.0  # 25 MVA (conforme especificação)
-TRAFO_VN_HV = 13.8   # 13.8 kV (média tensão offshore)
-TRAFO_VN_LV = 13.8   # 13.8 kV (mesmo nível - simplificado)
+TRAFO_SN_MVA = 13.8
+TRAFO_VN_KV = 0.22  # 220V == 0.22kV
 
 BARRAS = [2, 3, 6, 7, 9, 10, 14]
 BARRA_MAP = {i: idx for idx, i in enumerate(BARRAS)}
@@ -39,10 +37,10 @@ LINHAS = [
     (7, 9),
     (9, 10),
     (10, 14),
-
+    
     # Conexões de malha (criam redundância e múltiplos caminhos)
     (2, 6),    # Bypass direto B2 → B6
-    (3, 7),    # Bypass B3 → B7
+    (3, 7),    # Bypass B3 → B7 
     (6, 9),    # Bypass B6 → B9
     (7, 10),   # Bypass B7 → B10
     (9, 14),   # Bypass B9 → B14
@@ -50,8 +48,9 @@ LINHAS = [
 ]
 
 TRAFOS = [
-    (2, 3),   # Trafo 1 - Conforme especificação (25 MVA)
-    (6, 9),   # Trafo 2 - Conforme especificação (25 MVA) 
+    (2, 3),   # Trafo 1 - Entrada principal
+    (6, 7),   # Trafo 2 - Seção intermediária
+    (9, 10)   # Trafo 3 - Seção final (adicional para maior redundância)
 ]
 
 EXPORT_PATH = Path("simuladores") / "power_sim" / \
@@ -61,73 +60,48 @@ EXPORT_PATH = Path("simuladores") / "power_sim" / \
 def criar_rede_limpa() -> pp.pandapowerNet:
     """
     Cria uma rede mínima conforme o escopo ProtecAI (barras, linhas e trafos do projeto).
-    Baseado nas especificações do PETRO_PROTECAI_MINI para ambiente offshore.
 
     Returns:
         pp.pandapowerNet: Rede criada
     """
-    net = pp.create_empty_network(sn_mva=100, f_hz=60, name="ProtecAI_Mini_Offshore")
-    
-    # Barras - todas em 13.8 kV (média tensão offshore conforme especificação)
-    for idx, barra_ieee in enumerate(BARRAS):
-        pp.create_bus(net, name=f"B{barra_ieee}", vn_kv=TRAFO_VN_HV, type="b")
-    
-    # Linhas (conectam barras do mesmo nível - 13.8 kV)
-    # Parâmetros ajustados para ambiente offshore
+    net = pp.create_empty_network(sn_mva=15, f_hz=60, name="ProtecAI_Mini")
+    # Barras
+    for idx in range(len(BARRAS)):
+        pp.create_bus(net, name=f"B{BARRAS[idx]}", vn_kv=TRAFO_VN_KV, type="b")
+    # Linhas
     for from_ieee, to_ieee in LINHAS:
-        from_bus = BARRA_MAP[from_ieee]
-        to_bus = BARRA_MAP[to_ieee]
-        
         pp.create_line_from_parameters(
             net,
-            from_bus=from_bus,
-            to_bus=to_bus,
-            length_km=2.0,   # Distâncias curtas em plataforma
-            r_ohm_per_km=0.08,
-            x_ohm_per_km=0.35,
-            c_nf_per_km=15.0,
-            max_i_ka=1.5,
+            from_bus=BARRA_MAP[from_ieee],
+            to_bus=BARRA_MAP[to_ieee],
+            length_km=1.0,
+            r_ohm_per_km=0.05,
+            x_ohm_per_km=0.10,
+            c_nf_per_km=0.0,
+            max_i_ka=1.0,
             name=f"L_{from_ieee}_{to_ieee}"
         )
-    
-    # Transformadores (25 MVA cada, conforme especificação)
+    # Trafos
     for idx, (hv_ieee, lv_ieee) in enumerate(TRAFOS):
         pp.create_transformer_from_parameters(
             net,
             hv_bus=BARRA_MAP[hv_ieee],
             lv_bus=BARRA_MAP[lv_ieee],
-            sn_mva=TRAFO_SN_MVA,  # 25 MVA
-            vn_hv_kv=TRAFO_VN_HV, # 13.8 kV
-            vn_lv_kv=TRAFO_VN_LV, # 13.8 kV
-            vk_percent=6.5,
-            vkr_percent=0.8,
-            pfe_kw=25.0,
-            i0_percent=0.3,
-            name=f"TR{idx+1}_25MVA"
+            sn_mva=TRAFO_SN_MVA,
+            vn_hv_kv=TRAFO_VN_KV,
+            vn_lv_kv=TRAFO_VN_KV,
+            vk_percent=10.5,
+            vkr_percent=0.5,
+            pfe_kw=0.0,
+            i0_percent=0.01,
+            name=f"TR{idx+1}"
         )
-    
-    # Cargas offshore - conforme especificação do projeto
-    # Distribuição típica de plataforma de petróleo
-    cargas_mw = {
-        2: 0.0,   # Geração principal - sem carga
-        3: 8.0,   # Carga industrial (equipamentos de processo)
-        6: 0.0,   # Subestação intermediária - sem carga
-        7: 5.0,   # Carga auxiliar (sistemas de segurança)
-        9: 0.0,   # Distribuição - sem carga  
-        10: 6.0,  # Carga de utilidades (HVAC, iluminação)
-        14: 4.0   # Carga de telecomunicações e controle
-    }
-    
-    for idx, barra_ieee in enumerate(BARRAS):
-        p_mw = cargas_mw[barra_ieee]
-        if p_mw > 0:
-            # Fator de potência típico offshore: 0.85
-            q_mvar = p_mw * 0.62  # tan(arccos(0.85))
-            pp.create_load(net, bus=idx, p_mw=p_mw, q_mvar=q_mvar,
-                          name=f"Carga_B{barra_ieee}")
-    
-    # Fonte principal (ext_grid) - gerador da plataforma
-    pp.create_ext_grid(net, bus=0, vm_pu=1.05, name="Gerador_Principal_B2")
+    # Cargas (ajuste se desejar)
+    for idx in range(len(BARRAS)):
+        pp.create_load(net, bus=idx, p_mw=1.0, q_mvar=0.5,
+                       name=f"Carga_B{BARRAS[idx]}")
+    # Fonte (ext_grid)
+    pp.create_ext_grid(net, bus=0, vm_pu=1.0, name="Fonte_B2")
     return net
 
 
@@ -261,20 +235,18 @@ def gerar_protection_devices(net: pp.pandapowerNet) -> Dict:
 def exportar_json_customizado(
     net: pp.pandapowerNet,
     protection_devices: Dict,
-    protection_zones: list,
     bus_geodata: pd.DataFrame,
     line_geodata: pd.DataFrame,
     caminho: Path
 ) -> None:
     """
     Exporta o net e os componentes extras no formato ProtecAI.
-    Salva um arquivo JSON com os campos: pandapower_net, protection_devices, protection_zones, bus_geodata, line_geodata.
+    Salva um arquivo JSON com os campos: pandapower_net, protection_devices, bus_geodata, line_geodata.
     """
     import json
     saida = {
         "pandapower_net": pp.to_json(net),  # net serializado como string!
         "protection_devices": protection_devices,  # Dicionário dos dispositivos!
-        "protection_zones": protection_zones,  # Lista das zonas de proteção!
         # DataFrame para dict!
         "bus_geodata": bus_geodata.to_dict(orient="index"),
         # DataFrame para dict!
@@ -286,55 +258,6 @@ def exportar_json_customizado(
     print(f"Arquivo ProtecAI salvo em: {caminho}")
 
 
-def gerar_zonas_protecao(net: pp.pandapowerNet) -> list:
-    """
-    Gera zonas de proteção para transformadores conforme especificação offshore.
-    Cada transformador define uma zona de proteção primária.
-    
-    Args:
-        net: Rede PandaPower
-        
-    Returns:
-        list: Lista de zonas de proteção
-    """
-    zonas = []
-    
-    # Zona 1: Transformador TR1 (Barras 2-3)
-    # Proteção diferencial do primeiro transformador de 25 MVA
-    zonas.append({
-        "nome": "ZONA_TR1_25MVA",
-        "tipo": "diferencial_transformador", 
-        "transformador_id": 0,  # Primeiro transformador
-        "barras": [0, 1],  # Índices das barras conectadas (B2, B3)
-        "barras_ieee": [2, 3],  # Numeração IEEE original
-        "tensao_kv": 13.8,
-        "potencia_mva": 25.0,
-        "protecao_primaria": "87T",
-        "protecao_backup": ["50/51", "67"],
-        "tempo_atuacao_ms": 50,
-        "descricao": "Zona de proteção diferencial do transformador principal TR1"
-    })
-    
-    # Zona 2: Transformador TR2 (Barras 6-9) 
-    # Proteção diferencial do segundo transformador de 25 MVA
-    zonas.append({
-        "nome": "ZONA_TR2_25MVA",
-        "tipo": "diferencial_transformador",
-        "transformador_id": 1,  # Segundo transformador
-        "barras": [2, 4],  # Índices das barras conectadas (B6, B9)
-        "barras_ieee": [6, 9],  # Numeração IEEE original
-        "tensao_kv": 13.8,
-        "potencia_mva": 25.0,
-        "protecao_primaria": "87T",
-        "protecao_backup": ["50/51", "67"],
-        "tempo_atuacao_ms": 50,
-        "descricao": "Zona de proteção diferencial do transformador auxiliar TR2"
-    })
-    
-    print(f"✅ Geradas {len(zonas)} zonas de proteção para transformadores")
-    return zonas
-
-
 def main() -> None:
     """
     Pipeline completo: cria rede, gera dados, exporta para JSON ProtecAI.
@@ -342,8 +265,7 @@ def main() -> None:
     net = criar_rede_limpa()
     bus_geodata, line_geodata = gerar_geodata(net)
     protection_devices = gerar_protection_devices(net)
-    protection_zones = gerar_zonas_protecao(net)
-    exportar_json_customizado(net, protection_devices, protection_zones,
+    exportar_json_customizado(net, protection_devices,
                               bus_geodata, line_geodata, EXPORT_PATH)
 
 

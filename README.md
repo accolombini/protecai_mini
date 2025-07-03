@@ -5,11 +5,22 @@ Este projeto apresenta uma versão simplificada, porém tecnicamente estruturada
 
 ## 🎯 Objetivo
 
-Demonstrar o fluxo completo e integrado de uma aplicação para simulação e análise preliminar de redes elétricas com foco em automação de ajustes de proteção, considerando os desafios técnicos reais encontrados em projetos industriais, como em plataformas de petróleo.
+Simular um sistema de proteção elétrica com inserção de dispositivos e lógicas realistas em uma rede IEEE, com foco em:
 
-## 📌 Contexto e Abordagem
+- Coordenação de relés de sobrecorrente (ANSI 50/51) e diferenciais (87T);
+- Simulação de faltas e avaliação da resposta do sistema;
+- Desenvolvimento de algoritmo de RL para ajuste dinâmico dos parâmetros de proteção (pickup, TMS);
+- Integração futura com API REST (FastAPI) e frontend (React);
+- Preparação para aplicações industriais críticas (e.g., plataformas offshore), com elevada confiabilidade operacional exigida;
+- Conformidade com normas técnicas como IEEE 242 e NBR 14039, que norteiam a proteção de sistemas elétricos industriais complexos.
 
-Este projeto utiliza o sistema IEEE 14 barras como base para experimentação, integrando simulação de faltas com técnicas de aprendizado por reforço (RL) para ajustar relés de proteção.
+
+## 📌 Contexto e Justificativa
+
+O modelo IEEE 14 Barras é amplamente utilizado para estudos de fluxo de carga e estabilidade, mas não contempla dispositivos de proteção. Para tornar o modelo adequado à aplicação de algoritmos de proteção autônoma:
+- Inserimos relés de sobrecorrente, relés direcionais, relés diferenciais e fusíveis simulados;
+- Adicionamos disjuntores temporizados e transformadores com proteção dedicada;
+- Dividimos a rede em zonas de proteção para facilitar o controle por RL.
 
 ### PandaPower em Projetos Complexos: Aplicabilidade e Limitações
 
@@ -25,14 +36,14 @@ Portanto, seu uso neste projeto é exclusivamente voltado à prototipagem de est
 
 **Ausência de Relés no Modelo Padrão:** O sistema IEEE 14 barras não inclui ativos de proteção como relés em sua modelagem padrão. A topologia é composta por 14 barras, 5 geradores, 11 cargas e 20 linhas, mas os dados são orientados a fluxo de potência e tensões, sem contemplar explicitamente elementos de proteção.
 
-**Limitação:** Isso dificulta a aplicação direta de algoritmos de RL para ajuste de relés. Para contornar:
+__Limitação:__ Isso dificulta a aplicação direta de algoritmos de RL para ajuste de relés. Para contornar:
 
-- **Modelagem Adicional:** Inserir relés sintéticos nas linhas e barras, com curvas de tempo inverso, corrente de pickup, e parâmetros extraídos de normas (ex.: IEEE C37.113).
-- **Simulação de Falhas:** Gerar cenários realistas de faltas e utilizar o PandaPower para observar a resposta da rede.
+- __Modelagem Adicional:__ Inserir relés sintéticos nas linhas e barras, com curvas de tempo inverso, corrente de pickup, e parâmetros extraídos de normas (ex.: IEEE C37.113).
+- __Simulação de Falhas:__ Gerar cenários realistas de faltas e utilizar o PandaPower para observar a resposta da rede.
 
-**Desafio Específico:** A simplicidade topológica do IEEE 14 barras limita tanto a complexidade da coordenação quanto a representatividade para sistemas reais.
+__Desafio Específico:__ A simplicidade topológica do IEEE 14 barras limita tanto a complexidade da coordenação quanto a representatividade para sistemas reais.
 
-**Solução Proposta:**
+__Solução Proposta:__
 - Adicionar relés fictícios e simular seu comportamento.
 - Usar RL para otimizar os parâmetros (como TMS e pickup).
 - Validar os resultados com ferramentas mais robustas como DIgSILENT PowerFactory ou Matpower.
@@ -46,45 +57,59 @@ Para implementar o algoritmo RL:
 
 ### Penalidades e Recompensas no RL
 
-**Problemas Identificados:**
+__Problemas Identificados:__
 - Funções de recompensa mal calibradas não capturam bem os trade-offs entre seletividade, rapidez e confiabilidade.
 - Penalidades genéricas resultam em exploração arriscada.
 - Espaço de ação contínuo e amplo dificulta a convergência.
 
-**Refinamentos Propostos:**
-- **Recompensa Multiobjetivo:**
+__Refinamentos Propostos:__
+- __Recompensa Multiobjetivo:__
   - Seletividade: premiar atuação apenas do relé mais próximo.
   - Rapidez: tempo mínimo sem perder coordenação.
   - Estabilidade: manter variáveis do sistema dentro dos limites.
 
   Fórmula exemplo:
-  ```
-  R = w1*(1 - desvio_tensão) + w2*(1 - tempo_ação) - w3*disparo_indesejado
-  ```
-
-- **Penalidades Granulares:**
-  ```
-  P = -k1*(sobrecarga)^2 - k2*(desvio_tensão)^2 - k3*(falha_coordenação)
+  ```bash
+      R = w1*(1 - desvio_tensão) + w2*(1 - tempo_ação) - w3*disparo_indesejado
   ```
 
-- **Exploração Controlada:**
+- __Penalidades Granulares:__
+  ```bash
+      P = -k1*(sobrecarga)^2 - k2*(desvio_tensão)^2 - k3*(falha_coordenação)
+  ```
+
+- __Exploração Controlada:__
   - Uso de PPO ou DDPG.
   - Restringir espaço de ação a limites realistas (ex: 0.5–2.0 pu).
 
-- **Validação com Simulações:**
+- __Validação com Simulações:__
   - Testes com Matpower e PSS/E.
   - Ajustes iterativos na função de recompensa.
 
-**Riscos e Cuidados:**
+__Riscos e Cuidados:__
 - Recompensas imprecisas podem priorizar rapidez em detrimento da seletividade.
 - A convergência lenta pode comprometer a utilidade operacional.
 - Começar com IEEE 14 barras e migrar para IEEE 39 após validação.
 
 ### Ferramentas utilizadas:
 
-- **PandaPower** para simulação de fluxo de potência e faltas.
-- **Gymnasium** como interface de ambiente RL customizado.
-- **Stable-Baselines3** com o algoritmo PPO (Proximal Policy Optimization), ideal para otimizações em espaços contínuos.
+- __PandaPower__ para simulação de fluxo de potência e faltas.
+- __Gymnasium__ como interface de ambiente RL customizado.
+- __Stable-Baselines3__ com o algoritmo PPO (Proximal Policy Optimization), ideal para otimizações em espaços contínuos.
+
+## ⚙️ Arquitetura Atual do Projeto
+
+- simuladores/power_sim/gerar_ieee14_protecao_json.py → Gera o arquivo .json com a topologia modificada e os ativos de proteção.
+- simuladores/power_sim/visualizar_topologia_protecao.py → Gera o diagrama elétrico com zonas de proteção e dispositivos.
+- infra/protecao/protecao_eletrica.py → Define as classes de relés, suas lógicas de atuação e coordenação.
+- main.py → Orquestra a simulação do sistema.
+- run_tests.py → Roteia a execução automatizada dos testes unitários com pytest.
+- tests/ → Contém os testes de unidade com integração ao CI/CD via GitHub Actions.
+- simuladores/power_sim/gerar_ieee14_protecao_json.py → Gera o arquivo .json com a topologia modificada e os ativos de proteção.
+- simuladores/power_sim/visualizar_topologia_protecao.py → Gera o diagrama elétrico com zonas de proteção e dispositivos.
+- infra/protecao/protecao_eletrica.py → Define as classes de relés, suas lógicas de atuação e coordenação.
+- main.py → Orquestra a simulação do sistema.
+- tests/ → Contém testes automatizados (pytest) com pipeline CI/CD via GitHub Actions.
 
 ## 🚀 Estrutura do Projeto
 
@@ -124,13 +149,13 @@ Para implementar o algoritmo RL:
 
 ## 🛠️ Tecnologias Utilizadas
 
-- **Backend**: Python 3.12.5, FastAPI
-- **Frontend**: React, TypeScript
-- **Banco de Dados**: PostgreSQL
-- **Simulador**: PandaPower (Rede IEEE 14 barras)
-- **Aprendizado por Reforço**: Gymnasium, Stable-Baselines3
-- **Infraestrutura**: Docker, Docker Compose
-- **CI/CD**: GitHub Actions
+- __Backend__: Python 3.12.5, FastAPI
+- __Frontend__: React, TypeScript
+- __Banco de Dados__: PostgreSQL
+- __Simulador__: PandaPower (Rede IEEE 14 barras)
+- __Aprendizado por Reforço__: Gymnasium, Stable-Baselines3
+- __Infraestrutura__: Docker, Docker Compose
+- __CI/CD__: GitHub Actions
 
 ## 🗃️ Configuração do Ambiente
 
@@ -143,14 +168,14 @@ Para implementar o algoritmo RL:
 
 Clone o repositório:
 ```bash
-git clone <url_repositorio>
-cd petro_protecai_mini
+    git clone <url_repositorio>
+    cd petro_protecai_mini
 ```
 
 Inicialize o backend e banco PostgreSQL:
 ```bash
-cd infra/
-docker-compose up --build
+    cd infra/
+    docker-compose up --build
 ```
 
 Frontend (instalar e rodar):
@@ -166,15 +191,15 @@ O backend oferece endpoints REST para comunicação com a simulação.
 
 ### Estrutura Modular
 
-- **api/main.py** – ponto de entrada principal da API.
-- **routers/** – definição de rotas REST.
-- **services/simulacao.py** – lógica de negócio das simulações.
-- **database/models.py** – estrutura das tabelas com SQLAlchemy.
+- __api/main.py__ – ponto de entrada principal da API.
+- __routers/__ – definição de rotas REST.
+- __services/simulacao.py__ – lógica de negócio das simulações.
+- __database/models.py__ – estrutura das tabelas com SQLAlchemy.
 
 ### Rodando localmente
 ```bash
-cd backend/
-uvicorn api.main:app --reload
+    cd backend/
+    uvicorn api.main:app --reload
 ```
 
 Acesse documentação interativa: `http://localhost:8000/docs`
@@ -270,8 +295,8 @@ __O relatório é gerado em:__
 
 ### Interpretação das Porcentagens de Cobertura
 
-- As porcentagens mostradas ao lado de cada arquivo de teste refletem **quanto do pacote `infra.protecao` foi coberto por aquele arquivo especificamente**.
-- Elas **não representam falha**, mas apenas o impacto individual daquele teste na cobertura global.
+- As porcentagens mostradas ao lado de cada arquivo de teste refletem __quanto do pacote `infra.protecao` foi coberto por aquele arquivo especificamente__.
+- Elas __não representam falha__, mas apenas o impacto individual daquele teste na cobertura global.
 
 __Exemplo:__
 ```bash
@@ -307,7 +332,7 @@ __Exemplo:__
 
 ## Visão Geral
 
-O projeto **ProtecAI_mini** é uma versão reduzida e controlada da rede IEEE 14 Barras, projetada para validar estratégias iniciais de proteção, coordenação e atuação de dispositivos como relés, disjuntores e transformadores. Esta versão serve como base para o desenvolvimento incremental da solução **ProtecAI**, voltada para aplicações críticas, como sistemas de proteção elétrica em plataformas offshore.
+O projeto __ProtecAI_mini__ é uma versão reduzida e controlada da rede IEEE 14 Barras, projetada para validar estratégias iniciais de proteção, coordenação e atuação de dispositivos como relés, disjuntores e transformadores. Esta versão serve como base para o desenvolvimento incremental da solução __ProtecAI__, voltada para aplicações críticas, como sistemas de proteção elétrica em plataformas offshore.
 
 ## Objetivos
 
@@ -320,7 +345,7 @@ O projeto **ProtecAI_mini** é uma versão reduzida e controlada da rede IEEE 14
 
 ## ⚠️ Nota sobre a Topologia Minimalista
 
-A rede modelada representa uma **versão simplificada e experimental** da topologia IEEE 14 Barras. Foram inseridos relés, disjuntores e transformadores de forma **estratégica** nas **barras 1 a 8**, com o intuito de validar a lógica de atuação da proteção em um ambiente controlado.
+A rede modelada representa uma __versão simplificada e experimental__ da topologia IEEE 14 Barras. Foram inseridos relés, disjuntores e transformadores de forma __estratégica__ nas __barras 1 a 8__, com o intuito de validar a lógica de atuação da proteção em um ambiente controlado.
 
 > ❗ **Importante**: Este modelo não cobre toda a malha da rede IEEE 14. O objetivo é simular um subconjunto funcional e permitir a evolução modular e validada do projeto.
 
@@ -332,9 +357,9 @@ __Essa decisão visa:__
 - Facilitar a validação visual e automatizada.
 - Permitir a futura expansão gradual para os demais ativos.
 
-A rede modelada representa **uma versão reduzida e controlada** da topologia IEEE 14 Barras. Foram inseridos relés e disjuntores apenas nas **barras 1 a 8**, de forma estratégica, com foco na **validação inicial de algoritmos de proteção**.
+A rede modelada representa __uma versão reduzida e controlada__ da topologia IEEE 14 Barras. Foram inseridos relés e disjuntores apenas nas __barras 1 a 8__, de forma estratégica, com foco na __validação inicial de algoritmos de proteção__.
 
-Essa decisão visa simplificar a visualização e facilitar a identificação de falhas, mantendo a rede funcional, porém **parcialmente protegida**. Os demais elementos (barras 9–13, trafos e parte das cargas) **ainda não estão cobertos por dispositivos de proteção**, e serão incorporados em etapas futuras do projeto.
+Essa decisão visa simplificar a visualização e facilitar a identificação de falhas, mantendo a rede funcional, porém __parcialmente protegida__. Os demais elementos (barras 9–13, trafos e parte das cargas) __ainda não estão cobertos por dispositivos de proteção__, e serão incorporados em etapas futuras do projeto.
 
 Portanto, este modelo é chamado **ProtecAI_mini** e serve como **primeira etapa experimental** para o desenvolvimento e avaliação da lógica de coordenação inteligente.
 
@@ -367,7 +392,20 @@ Portanto, este modelo é chamado **ProtecAI_mini** e serve como **primeira etapa
 | Fusíveis        | 3             | Simulado   | Nos ramais com menor criticidade                   |
 
 
+## 🧩 Dispositivos Modelados
+
+| Tipo de Dispositivo          | Função                                               | Locais Sugeridos                      |
+| ---------------------------- | ---------------------------------------------------- | ------------------------------------- |
+| Relé 50/51 (Sobrecorrente)   | Proteção de linhas e alimentadores                   | Barras 3–4, 4–5, 5–6, 6–13            |
+| Relé 67 (Direcional)         | Evita atuação indevida em fluxos reversos            | Barras próximas a geradores (2, 3, 6) |
+| Relé 87T (Diferencial)       | Proteção de transformadores                          | Barras 2–4, 4–5                       |
+| Relé 27/59 (Sub/Sobretensão) | Proteção de cargas sensíveis e controle de qualidade | Barras 7, 9, 10, 14                   |
+| Disjuntores temporizados     | Interrupção de circuitos sob comando de relés        | Saídas de transformadores e geradores |
+| Fusíveis simulados           | Proteção rápida e isolada                            | Cargas menores, terminais             |
+
 > 📌 ___Nota___: A modelagem parcial dos transformadores foi realizada na Etapa 0. Relés diferenciais (87T) ainda serão adicionados para proteção completa.
+> 
+---
 
 ## Dispositivos de Proteção Inseridos
 
@@ -381,11 +419,25 @@ _Estes dispositivos atuam como base de teste para a futura implementação da co
 
 ---
 
+## 🗺️ Topologia Atual (com Proteção)
+
+![Diagrama do Sistema IEEE 14 com Zonas e Relés](docs/IEEE14_ATIVOS.png)
+
+O sistema está dividido em 11 zonas de proteção:
+- 2 zonas diferenciais (Z12 e Z13);
+- 9 zonas de barras com relés e disjuntores associados.
+
+As zonas foram definidas com base na localização dos transformadores, geradores e cargas críticas. As zonas diferenciais foram aplicadas nos trechos com transformadores acoplados, enquanto as zonas de barra cobrem trechos da rede com múltiplas conexões e maior complexidade de manobra. A segmentação visa garantir seletividade, proteção coordenada e a viabilidade de controle por RL.
+
+As zonas foram validadas e mantêm seletividade topológica.
+
+---
+
 ### ✔️ Visualização da Rede IEEE14 Barras com os ativos
 
 ![Diagrama sugerido inicialmente para testes e simulações no IEEE 14 Barras](docs/ieee14_topologia_protecao.png)
 
-__Este projeto implementa uma versão inicial do sistema IEEE 14 Barras__ com elementos de proteção modelados explicitamente para testes e desenvolvimento de algoritmos inteligentes de coordenação de proteção. A rede foi estendida com a inserção de **relés**, **disjuntores**, **cargas**, **geradores**, **ext_grids** e **transformadores**, associados a barras específicas da topologia original.
+__Este projeto implementa uma versão inicial do sistema IEEE 14 Barras__ com elementos de proteção modelados explicitamente para testes e desenvolvimento de algoritmos inteligentes de coordenação de proteção. A rede foi estendida com a inserção de __relés__, __disjuntores__, __cargas__, __geradores__, __ext_grids__ e __transformadores__, associados a barras específicas da topologia original.
 
 A topologia protegida pode ser visualizada executando o script:
 
@@ -393,43 +445,41 @@ A topologia protegida pode ser visualizada executando o script:
     python simuladores/power_sim/visualizar_topologia_protecao.py
 ```
 
-__O gráfico gerado apresenta:__
+__Legenda de Cores do Diagrama:__
 
-- 🔴 __Relés__ (vermelho)
-- 🔵 __Disjuntores__ (azul)
-- 🟢 __Cargas__ (verde)
-- 🟠 __Geradores__ (laranja)
-- ⚫ __Ext_grid__ (preto)
-- 🟣 __Transformadores__ (roxo)
-- ⚪ __Barras não protegidas__ (cinza claro)
+- 🔵 __Relés 51 / 67 / 27-59__ → `blue`
+- 🟣 __Relés 87T (diferencial)__ → `purple`
+- 🟢 __Disjuntores (D)__ → `darkgreen`
+- 🟠 __Fusíveis (F)__ → `orange`
+- ⚫ __Linhas__ → `black`
 
 ---
-**Tipos de falhas a serem simuladas:**
+__Tipos de falhas a serem simuladas:__
 
 - Curto-circuito monofásico, bifásico e trifásico.
 - Falhas fase-terra.
 - Falhas em transformadores (sobreaquecimento, curto interno).
 - Desconexão súbita de carga ou geração.
 
-**Localização das falhas:**
+__Localização das falhas:__
 
 - Em barras específicas (ex.: barra 3 com carga crítica).
 - Em linhas de interligação entre barras.
 - Em transformadores ou nas extremidades do sistema.
 
-**Parâmetros das falhas:**
+__Parâmetros das falhas:__
 
 - Intensidade (resistência de falta).
 - Tempo de início e duração.
 - Probabilidade de ocorrência (para testes de robustez).
 
-**Objetivo da simulação:**
+__Objetivo da simulação:__
 
 - Avaliar a atuação dos relés e disjuntores atuais.
 - Verificar tempo de atuação e alcance de proteção.
 - Registrar os casos em que a proteção falha ou atua incorretamente.
 
-**Estrutura esperada (a projetar):**
+__Estrutura esperada (a projetar):__
 
 Um módulo `gerador_defeitos.py` com funções como:
 
@@ -448,7 +498,7 @@ Este projeto de simulação será validado manualmente na versão ProtecAI_mini,
 
 ---
 
-> Versão atual: **ProtecAI_mini v0.4** – Topologia parcialmente protegida com inclusão de transformadores, visão estratégica para ambientes offshore e foco em falhas críticas como as de transformadores.
+> Versão atual: __ProtecAI_mini v0.4__ – Topologia parcialmente protegida com inclusão de transformadores, visão estratégica para ambientes offshore e foco em falhas críticas como as de transformadores.
 
 ---
 ### Etapa 0 – Correções de Infraestrutura
@@ -510,7 +560,7 @@ Este projeto de simulação será validado manualmente na versão __ProtecAI_min
 
 ---
 
-> Versão atual: **ProtecAI_mini v0.4** – Topologia parcialmente protegida com inclusão de transformadores, visão estratégica para ambientes offshore e foco em falhas críticas como as de transformadores.
+> Versão atual: __ProtecAI_mini v0.4__ – Topologia parcialmente protegida com inclusão de transformadores, visão estratégica para ambientes offshore e foco em falhas críticas como as de transformadores.
 
 ---
 
@@ -575,6 +625,42 @@ ___Esta topologia base será utilizada para aplicação de falhas controladas e 
 - [x] Backend funcional com FastAPI
 - [x] Frontend funcional com React + Tailwind
 - [x] CI/CD com GitHub Actions
+
+---
+
+🔁 Etapas em Andamento e Futuras (versão refatorada)
+md
+Copiar
+Editar
+## 🔁 Etapas em Andamento e Futuras
+
+- [x] Modelagem dos dispositivos e zonas de proteção;
+- [x] Visualização da topologia com `matplotlib` (layout validado);
+- [x] Integração contínua (CI/CD) com GitHub Actions e testes automatizados (`pytest`);
+- [ ] Geração automatizada de faltas elétricas em pontos críticos da rede;
+- [ ] Testes unitários e de integração por tipo de dispositivo de proteção (relé, disjuntor, fusível);
+- [ ] Desenvolvimento e integração do ambiente de Aprendizado por Reforço (RL);
+- [ ] Implementação da lógica de penalidade e recompensa baseada em seletividade e estabilidade;
+- [ ] Construção de API REST com FastAPI e painel frontend com React;
+- [ ] Validação de desempenho do sistema com métricas industriais (tempo de resposta, taxa de falhas, blackout evitado).
+🧠 Estratégia de RL (versão expandida)
+md
+Copiar
+Editar
+## 🧠 Estratégia de RL (Planejada)
+
+- __Estado:__ Vetores representando corrente por barra, tensão por zona, tempo de atuação dos relés, e estado dos disjuntores;
+- __Ação:__ Ajustes contínuos dos parâmetros de proteção (ex: corrente de pickup, TMS, tempo de atuação);
+- __Recompensas:__ Concessão de pontos para ações que:
+  - Garantem seletividade de atuação;
+  - Minimiza tempo de falta;
+  - Evitam desligamento de cargas críticas;
+  - Restabelecem a operação segura;
+- __Penalidades:__ Redução de pontos em cenários como:
+  - Blackout total ou parcial;
+  - Atuação incorreta ou tardia de relé;
+  - Abertura de disjuntor em zona não-faltosa;
+  - Infringência de limites operacionais definidos por norma (IEEE 242, NBR 14039).
 
 ---
 
