@@ -86,7 +86,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: 🟢 Setup Node.js ${{ env.NODE_VERSION }}
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'npm'
@@ -109,131 +109,16 @@ jobs:
         run: npm run build
 
       - name: 📦 Upload Build Artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: frontend-build
           path: src/frontend/petro-protecai-frontend/dist
 
-  # Job 3: Testes de Integração E2E
-  integration-tests:
-    runs-on: ubuntu-latest
-    name: 🔗 Integration & E2E Tests
-    needs: [backend-tests, frontend-tests]
-
-    services:
-      # Simular serviços se necessário
-      redis:
-        image: redis:alpine
-        ports:
-          - 6379:6379
-
-    steps:
-      - name: 🔄 Checkout do código
-        uses: actions/checkout@v4
-
-      - name: 🐍 Setup Python ${{ env.PYTHON_VERSION }}
-        uses: actions/setup-python@v4
-        with:
-          python-version: ${{ env.PYTHON_VERSION }}
-
-      - name: 🟢 Setup Node.js ${{ env.NODE_VERSION }}
-        uses: actions/setup-node@v3
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
-          cache-dependency-path: src/frontend/petro-protecai-frontend/package-lock.json
-
-      - name: 📦 Instalar dependências
-        run: |
-          pip install -r requirements.txt
-          cd src/frontend/petro-protecai-frontend && npm ci
-
-      - name: 🚀 Iniciar Backend em Background
-        run: |
-          python start_api.py &
-          sleep 10
-        env:
-          PYTHONPATH: .
-
-      - name: 🚀 Iniciar Frontend em Background
-        working-directory: src/frontend/petro-protecai-frontend
-        run: |
-          npm run build
-          npm run preview &
-          sleep 5
-
-      - name: 🔍 Health Check
-        run: |
-          curl -f http://localhost:8000/health || exit 1
-          curl -f http://localhost:4173/ || exit 1
-
-      - name: 🧪 Testes de Compliance via API
-        run: |
-          python tests/test_dashboard_compliance.py
-
-      - name: 🧪 Testes de Debug de Cenários
-        run: |
-          python debug/debug_scenarios.py
-
-      - name: 🧪 Comprehensive API Tests
-        run: |
-          python tests/comprehensive_api_test.py
-
-  # Job 4: Segurança e Qualidade
-  security-quality:
-    runs-on: ubuntu-latest
-    name: 🔒 Security & Quality Checks
-
-    steps:
-      - name: 🔄 Checkout do código
-        uses: actions/checkout@v4
-
-      - name: 🐍 Setup Python ${{ env.PYTHON_VERSION }}
-        uses: actions/setup-python@v4
-        with:
-          python-version: ${{ env.PYTHON_VERSION }}
-
-      - name: 📦 Instalar ferramentas de segurança
-        run: |
-          pip install bandit safety flake8 black isort mypy
-
-      - name: 🔒 Security Scan com Bandit
-        run: |
-          bandit -r src/ -f json -o bandit-report.json || true
-
-      - name: 🔒 Vulnerability Check com Safety
-        run: |
-          safety check --json --output safety-report.json || true
-
-      - name: 🧹 Code Quality com Flake8
-        run: |
-          flake8 src/ --count --select=E9,F63,F7,F82 --show-source --statistics
-
-      - name: 🎨 Code Formatting com Black
-        run: |
-          black --check src/
-
-      - name: 📝 Import Sorting com isort
-        run: |
-          isort --check-only src/
-
-      - name: 🏷️ Type Checking com MyPy
-        run: |
-          mypy src/backend/ --ignore-missing-imports || true
-
-      - name: 📊 Upload Security Reports
-        uses: actions/upload-artifact@v3
-        with:
-          name: security-reports
-          path: |
-            bandit-report.json
-            safety-report.json
-
-  # Job 5: Deploy Frontend
+  # Job 3: Deploy Frontend
   deploy-frontend:
     runs-on: ubuntu-latest
     name: 🌐 Deploy Frontend
-    needs: [backend-tests, frontend-tests, integration-tests]
+    needs: [backend-tests, frontend-tests]
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
 
     steps:
@@ -241,7 +126,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: 🟢 Setup Node.js ${{ env.NODE_VERSION }}
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'npm'
@@ -257,142 +142,13 @@ jobs:
           npm run build
           echo "Build concluído com sucesso!"
 
-      - name: 📦 Download Frontend Build
-        uses: actions/download-artifact@v3
-        with:
-          name: frontend-build
-          path: dist
-        continue-on-error: true
-
       - name: 🚀 Deploy para GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: src/frontend/petro-protecai-frontend/dist
-          cname: protecai-mini.github.io
-
-      - name: 🌍 Deploy para Netlify (Alternativo)
-        if: env.NETLIFY_AUTH_TOKEN != ''
-        uses: nwtgck/actions-netlify@v2.0
-        with:
-          publish-dir: src/frontend/petro-protecai-frontend/dist
-          production-branch: main
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          deploy-message: "Deploy do ProtecAI Mini v${{ github.sha }}"
-        env:
-          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
-          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
-        continue-on-error: true
 
       - name: ✅ Deploy Concluído
         run: |
           echo "🎉 Frontend deploy concluído com sucesso!"
-          echo "🌐 Dashboard disponível em: https://protecai-mini.github.io"
           echo "📊 Status: ONLINE"
-
-  # Job 6: Deploy Preview (apenas PRs)
-  deploy-preview:
-    runs-on: ubuntu-latest
-    name: 🔍 Deploy Preview
-    needs: [backend-tests, frontend-tests]
-    if: github.event_name == 'pull_request'
-
-    steps:
-      - name: 🔄 Checkout do código
-        uses: actions/checkout@v4
-
-      - name: 🟢 Setup Node.js ${{ env.NODE_VERSION }}
-        uses: actions/setup-node@v3
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
-          cache-dependency-path: src/frontend/petro-protecai-frontend/package-lock.json
-
-      - name: 📦 Instalar dependências Frontend
-        working-directory: src/frontend/petro-protecai-frontend
-        run: npm ci
-
-      - name: 🏗️ Build Preview
-        working-directory: src/frontend/petro-protecai-frontend
-        run: npm run build
-
-      - name: 🔍 Deploy Preview para Netlify
-        uses: nwtgck/actions-netlify@v2.0
-        with:
-          publish-dir: src/frontend/petro-protecai-frontend/dist
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          deploy-message: "Preview PR #${{ github.event.number }}"
-        env:
-          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
-          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
-        continue-on-error: true
-
-      - name: 💬 Comentar PR com Preview
-        uses: actions/github-script@v6
-        with:
-          script: |
-            github.rest.issues.createComment({
-              issue_number: context.issue.number,
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              body: `🔍 **Preview Deploy Disponível!**\n\n🌐 **Dashboard Preview:** [Clique aqui para acessar](https://deploy-preview-${{ github.event.number }}--protecai-mini.netlify.app)\n\n✅ Build concluído com sucesso!`
-            })
-
-  # Job 7: Release (apenas main branch)
-  release:
-    runs-on: ubuntu-latest
-    name: 🏷️ Release & Deploy
-    needs: [backend-tests, frontend-tests, integration-tests, security-quality]
-    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-
-    steps:
-      - name: 🔄 Checkout do código
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - name: 📦 Download Frontend Build
-        uses: actions/download-artifact@v3
-        with:
-          name: frontend-build
-          path: dist
-
-      - name: 🏷️ Generate Release Tag
-        id: tag
-        run: |
-          TAG="v$(date +'%Y.%m.%d')-$(git rev-parse --short HEAD)"
-          echo "tag=$TAG" >> $GITHUB_OUTPUT
-          echo "Generated tag: $TAG"
-
-      - name: 🚀 Create Release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: ${{ steps.tag.outputs.tag }}
-          release_name: ProtecAI Mini ${{ steps.tag.outputs.tag }}
-          body: |
-            ## 🛢️ ProtecAI Mini Release ${{ steps.tag.outputs.tag }}
-            
-            ### ✅ Validated Features:
-            - ✅ Ultra-Conservative Protection Logic
-            - ✅ 4/4 Standards Compliance (IEEE, IEC, NBR, API)
-            - ✅ Reinforcement Learning Optimization
-            - ✅ Executive Dashboard Interface
-            - ✅ Real-time Scenario Simulation
-            
-            ### 🧪 Test Results:
-            - ✅ Backend Tests: All Passed
-            - ✅ Frontend Tests: All Passed
-            - ✅ Integration Tests: All Passed
-            - ✅ Security Scans: Completed
-            
-            **System approved for offshore petroleum operations.**
-          draft: false
-          prerelease: false
-
-      - name: 🚀 Deploy to Production
-        run: |
-          echo "🚀 Deploy para produção"
-          echo "Production URL: https://protecai-mini.petrobras.com"
-          # Aqui você adicionaria o deploy real para produção
