@@ -79,21 +79,21 @@ def carregar_json(path_json):
 def plotar_zonas_protecao(ax, net, bus_geodata, protection_zones):
     """Plota as zonas de proteção como áreas sombreadas na rede."""
     print("🛡️ Plotando zonas de proteção...")
-    
+
     from matplotlib.patches import Polygon
     import numpy as np
-    
+
     # Processar cada zona de proteção
     for zona in protection_zones:
         nome = zona.get("nome", "ZONA")
         tipo = zona.get("tipo", "")
         barras = zona.get("barras", [])
-        
+
         if len(barras) < 2:
             continue
-            
+
         print(f"  📍 Plotando zona: {nome} - Barras: {barras}")
-        
+
         try:
             # Obter coordenadas das barras da zona
             coords_zona = []
@@ -102,32 +102,32 @@ def plotar_zonas_protecao(ax, net, bus_geodata, protection_zones):
                     x = bus_geodata.loc[barra_id, "x"]
                     y = bus_geodata.loc[barra_id, "y"]
                     coords_zona.append([x, y])
-            
+
             if len(coords_zona) >= 2:
                 # Calcular centro da zona
                 coords_array = np.array(coords_zona)
                 center_x = np.mean(coords_array[:, 0])
                 center_y = np.mean(coords_array[:, 1])
-                
+
                 # Para transformadores (2 barras), criar um retângulo
                 if len(coords_zona) == 2:
                     x1, y1 = coords_zona[0]
                     x2, y2 = coords_zona[1]
-                    
+
                     # Calcular vetor perpendicular para criar largura
                     dx = x2 - x1
                     dy = y2 - y1
                     length = np.sqrt(dx**2 + dy**2)
-                    
+
                     if length > 0:
                         # Normalizar e criar perpendicular
                         perp_x = -dy / length * 0.08  # Largura da zona
                         perp_y = dx / length * 0.08
-                        
+
                         # Expandir um pouco ao longo da linha
                         extend_x = dx / length * 0.05
                         extend_y = dy / length * 0.05
-                        
+
                         # Criar retângulo ao redor do transformador
                         poly_coords = [
                             [x1 - extend_x + perp_x, y1 - extend_y + perp_y],
@@ -135,32 +135,34 @@ def plotar_zonas_protecao(ax, net, bus_geodata, protection_zones):
                             [x2 + extend_x - perp_x, y2 + extend_y - perp_y],
                             [x2 + extend_x + perp_x, y2 + extend_y + perp_y]
                         ]
-                        
+
                         # Criar e plotar o polígono
-                        polygon = Polygon(poly_coords, alpha=0.3, 
-                                        facecolor=COLOR_ZONA_PROTECAO, 
-                                        edgecolor=COLOR_ZONA_BORDA, 
-                                        linewidth=2, zorder=0.5)
+                        polygon = Polygon(poly_coords, alpha=0.3,
+                                          facecolor=COLOR_ZONA_PROTECAO,
+                                          edgecolor=COLOR_ZONA_BORDA,
+                                          linewidth=2, zorder=0.5)
                         ax.add_patch(polygon)
-                        
+
                         # Adicionar label da zona
-                        label_text = nome.replace("ZONA_", "").replace("_25MVA", "")
-                        ax.text(center_x, center_y - 0.1, label_text, fontsize=8, 
-                               color=COLOR_ZONA_BORDA, ha="center", va="center", 
-                               fontweight="bold", backgroundcolor="white", 
-                               bbox=dict(boxstyle="round,pad=0.2", 
-                                       facecolor="white", alpha=0.8), zorder=15)
-                
+                        label_text = nome.replace(
+                            "ZONA_", "").replace("_25MVA", "")
+                        ax.text(center_x, center_y - 0.1, label_text, fontsize=8,
+                                color=COLOR_ZONA_BORDA, ha="center", va="center",
+                                fontweight="bold", backgroundcolor="white",
+                                bbox=dict(boxstyle="round,pad=0.2",
+                                          facecolor="white", alpha=0.8), zorder=15)
+
                 else:
                     # Para múltiplas barras, criar um círculo expandido
                     # Calcular raio baseado na distância máxima do centro
                     max_dist = 0
                     for coord in coords_zona:
-                        dist = np.sqrt((coord[0] - center_x)**2 + (coord[1] - center_y)**2)
+                        dist = np.sqrt(
+                            (coord[0] - center_x)**2 + (coord[1] - center_y)**2)
                         max_dist = max(max_dist, dist)
-                    
+
                     radius = max_dist + 0.05  # Adicionar margem
-                    
+
                     # Criar círculo aproximado com polígono
                     angles = np.linspace(0, 2*np.pi, 20)
                     circle_coords = []
@@ -168,20 +170,21 @@ def plotar_zonas_protecao(ax, net, bus_geodata, protection_zones):
                         x = center_x + radius * np.cos(angle)
                         y = center_y + radius * np.sin(angle)
                         circle_coords.append([x, y])
-                    
-                    polygon = Polygon(circle_coords, alpha=0.3, 
-                                    facecolor=COLOR_ZONA_PROTECAO, 
-                                    edgecolor=COLOR_ZONA_BORDA, 
-                                    linewidth=2, zorder=0.5)
+
+                    polygon = Polygon(circle_coords, alpha=0.3,
+                                      facecolor=COLOR_ZONA_PROTECAO,
+                                      edgecolor=COLOR_ZONA_BORDA,
+                                      linewidth=2, zorder=0.5)
                     ax.add_patch(polygon)
-                    
-                    label_text = nome.replace("ZONA_", "").replace("_25MVA", "")
-                    ax.text(center_x, center_y, label_text, fontsize=8, 
-                           color=COLOR_ZONA_BORDA, ha="center", va="center", 
-                           fontweight="bold", backgroundcolor="white", 
-                           bbox=dict(boxstyle="round,pad=0.2", 
-                                   facecolor="white", alpha=0.8), zorder=15)
-        
+
+                    label_text = nome.replace(
+                        "ZONA_", "").replace("_25MVA", "")
+                    ax.text(center_x, center_y, label_text, fontsize=8,
+                            color=COLOR_ZONA_BORDA, ha="center", va="center",
+                            fontweight="bold", backgroundcolor="white",
+                            bbox=dict(boxstyle="round,pad=0.2",
+                                      facecolor="white", alpha=0.8), zorder=15)
+
         except Exception as e:
             print(f"⚠️ Erro ao plotar zona {nome}: {e}")
             continue
@@ -359,7 +362,8 @@ def plotar_rede(net, bus_geodata, line_geodata, protection_devices, protection_z
             if idx in barras_validas:
                 x, y = bus_geodata.loc[idx, "x"], bus_geodata.loc[idx, "y"]
                 raio = 0.15
-                circulo = plt.Circle((x, y), raio, color=COLOR_ZONA_PROTECAO, alpha=0.3, zorder=0)
+                circulo = plt.Circle(
+                    (x, y), raio, color=COLOR_ZONA_PROTECAO, alpha=0.3, zorder=0)
                 ax.add_artist(circulo)
                 ax.text(x, y+0.1, "Zona", fontsize=FONT_LABEL, color=COLOR_ZONA_BORDA,
                         ha="center", va="center", fontweight="bold", zorder=10)
@@ -371,7 +375,8 @@ def plotar_rede(net, bus_geodata, line_geodata, protection_devices, protection_z
                 x, y = (bus_geodata.loc[hv, "x"] + bus_geodata.loc[lv, "x"]) / \
                     2, (bus_geodata.loc[hv, "y"] + bus_geodata.loc[lv, "y"])/2
                 raio = 0.2
-                circulo = plt.Circle((x, y), raio, color=COLOR_ZONA_PROTECAO, alpha=0.3, zorder=0)
+                circulo = plt.Circle(
+                    (x, y), raio, color=COLOR_ZONA_PROTECAO, alpha=0.3, zorder=0)
                 ax.add_artist(circulo)
                 ax.text(x, y+0.1, "Zona", fontsize=FONT_LABEL, color=COLOR_ZONA_BORDA,
                         ha="center", va="center", fontweight="bold", zorder=10)
@@ -407,7 +412,9 @@ def plotar_rede(net, bus_geodata, line_geodata, protection_devices, protection_z
 def main():
     path_json = Path("simuladores") / "power_sim" / \
         "data" / "ieee14_protecao.json"
-    path_out = Path("docs") / "rede_protecai.png"
+    # Garantir que o arquivo seja salvo na pasta docs da raiz do projeto
+    path_out = Path(__file__).resolve(
+    ).parents[2] / "docs" / "rede_protecai.png"
     try:
         net, protection_devices, protection_zones, bus_geodata, line_geodata = carregar_json(
             path_json)

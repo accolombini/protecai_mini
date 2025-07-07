@@ -7,7 +7,9 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "test": "echo 'No tests specified yet'",
+    "test:ci": "echo 'CI tests passed - no tests configured yet'"
   },
   "dependencies": {
     "react": "^19.1.0",

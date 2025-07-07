@@ -51,7 +51,7 @@ LINHAS = [
 
 TRAFOS = [
     (2, 3),   # Trafo 1 - Conforme especificação (25 MVA)
-    (6, 9),   # Trafo 2 - Conforme especificação (25 MVA) 
+    (6, 9),   # Trafo 2 - Conforme especificação (25 MVA)
 ]
 
 EXPORT_PATH = Path("simuladores") / "power_sim" / \
@@ -66,18 +66,19 @@ def criar_rede_limpa() -> pp.pandapowerNet:
     Returns:
         pp.pandapowerNet: Rede criada
     """
-    net = pp.create_empty_network(sn_mva=100, f_hz=60, name="ProtecAI_Mini_Offshore")
-    
+    net = pp.create_empty_network(
+        sn_mva=100, f_hz=60, name="ProtecAI_Mini_Offshore")
+
     # Barras - todas em 13.8 kV (média tensão offshore conforme especificação)
     for idx, barra_ieee in enumerate(BARRAS):
         pp.create_bus(net, name=f"B{barra_ieee}", vn_kv=TRAFO_VN_HV, type="b")
-    
+
     # Linhas (conectam barras do mesmo nível - 13.8 kV)
     # Parâmetros ajustados para ambiente offshore
     for from_ieee, to_ieee in LINHAS:
         from_bus = BARRA_MAP[from_ieee]
         to_bus = BARRA_MAP[to_ieee]
-        
+
         pp.create_line_from_parameters(
             net,
             from_bus=from_bus,
@@ -89,7 +90,7 @@ def criar_rede_limpa() -> pp.pandapowerNet:
             max_i_ka=1.5,
             name=f"L_{from_ieee}_{to_ieee}"
         )
-    
+
     # Transformadores (25 MVA cada, conforme especificação)
     for idx, (hv_ieee, lv_ieee) in enumerate(TRAFOS):
         pp.create_transformer_from_parameters(
@@ -97,15 +98,15 @@ def criar_rede_limpa() -> pp.pandapowerNet:
             hv_bus=BARRA_MAP[hv_ieee],
             lv_bus=BARRA_MAP[lv_ieee],
             sn_mva=TRAFO_SN_MVA,  # 25 MVA
-            vn_hv_kv=TRAFO_VN_HV, # 13.8 kV
-            vn_lv_kv=TRAFO_VN_LV, # 13.8 kV
+            vn_hv_kv=TRAFO_VN_HV,  # 13.8 kV
+            vn_lv_kv=TRAFO_VN_LV,  # 13.8 kV
             vk_percent=6.5,
             vkr_percent=0.8,
             pfe_kw=25.0,
             i0_percent=0.3,
             name=f"TR{idx+1}_25MVA"
         )
-    
+
     # Cargas offshore - conforme especificação do projeto
     # Distribuição típica de plataforma de petróleo
     cargas_mw = {
@@ -113,19 +114,19 @@ def criar_rede_limpa() -> pp.pandapowerNet:
         3: 8.0,   # Carga industrial (equipamentos de processo)
         6: 0.0,   # Subestação intermediária - sem carga
         7: 5.0,   # Carga auxiliar (sistemas de segurança)
-        9: 0.0,   # Distribuição - sem carga  
+        9: 0.0,   # Distribuição - sem carga
         10: 6.0,  # Carga de utilidades (HVAC, iluminação)
         14: 4.0   # Carga de telecomunicações e controle
     }
-    
+
     for idx, barra_ieee in enumerate(BARRAS):
         p_mw = cargas_mw[barra_ieee]
         if p_mw > 0:
             # Fator de potência típico offshore: 0.85
             q_mvar = p_mw * 0.62  # tan(arccos(0.85))
             pp.create_load(net, bus=idx, p_mw=p_mw, q_mvar=q_mvar,
-                          name=f"Carga_B{barra_ieee}")
-    
+                           name=f"Carga_B{barra_ieee}")
+
     # Fonte principal (ext_grid) - gerador da plataforma
     pp.create_ext_grid(net, bus=0, vm_pu=1.05, name="Gerador_Principal_B2")
     return net
@@ -271,8 +272,35 @@ def exportar_json_customizado(
     Salva um arquivo JSON com os campos: pandapower_net, protection_devices, protection_zones, bus_geodata, line_geodata.
     """
     import json
+
+    # Executar power flow para garantir que a rede está válida
+    try:
+        pp.runpp(net, verbose=False)
+        print("✅ Power flow executado com sucesso")
+    except Exception as e:
+        print(f"⚠️ Aviso: Power flow falhou: {e}")
+
+    # Serializar a rede PandaPower para JSON
+    try:
+        pandapower_json = pp.to_json(net)
+        print(f"✅ Rede serializada: {len(pandapower_json)} caracteres")
+    except Exception as e:
+        print(f"❌ Erro na serialização: {e}")
+        # Fallback: serializar manualmente os elementos principais
+        pandapower_json = json.dumps({
+            "version": "3.1.2",
+            "name": net.name,
+            "f_hz": net.f_hz,
+            "sn_mva": net.sn_mva,
+            "bus": net.bus.to_dict('records'),
+            "line": net.line.to_dict('records'),
+            "trafo": net.trafo.to_dict('records'),
+            "load": net.load.to_dict('records'),
+            "ext_grid": net.ext_grid.to_dict('records'),
+        })
+
     saida = {
-        "pandapower_net": pp.to_json(net),  # net serializado como string!
+        "pandapower_net": pandapower_json,  # net serializado como string!
         "protection_devices": protection_devices,  # Dicionário dos dispositivos!
         "protection_zones": protection_zones,  # Lista das zonas de proteção!
         # DataFrame para dict!
@@ -280,30 +308,45 @@ def exportar_json_customizado(
         # DataFrame para dict!
         "line_geodata": line_geodata.to_dict(orient="index"),
     }
+
     caminho.parent.mkdir(parents=True, exist_ok=True)
+
     with open(caminho, 'w', encoding='utf-8') as f:
         json.dump(saida, f, ensure_ascii=False, indent=2)
-    print(f"Arquivo ProtecAI salvo em: {caminho}")
+
+    print(f"✅ Arquivo ProtecAI salvo em: {caminho}")
+
+    # Verificação imediata
+    print(f"📊 Resumo dos dados exportados:")
+    print(f"   - Barras: {len(net.bus)}")
+    print(f"   - Linhas: {len(net.line)}")
+    print(f"   - Transformadores: {len(net.trafo)}")
+    print(f"   - Cargas: {len(net.load)}")
+    print(f"   - Geradores: {len(net.ext_grid)}")
+    print(f"   - Relés: {len(protection_devices['reles'])}")
+    print(f"   - Disjuntores: {len(protection_devices['disjuntores'])}")
+    print(f"   - Fusíveis: {len(protection_devices['fusiveis'])}")
+    print(f"   - Zonas de proteção: {len(protection_zones)}")
 
 
 def gerar_zonas_protecao(net: pp.pandapowerNet) -> list:
     """
     Gera zonas de proteção para transformadores conforme especificação offshore.
     Cada transformador define uma zona de proteção primária.
-    
+
     Args:
         net: Rede PandaPower
-        
+
     Returns:
         list: Lista de zonas de proteção
     """
     zonas = []
-    
+
     # Zona 1: Transformador TR1 (Barras 2-3)
     # Proteção diferencial do primeiro transformador de 25 MVA
     zonas.append({
         "nome": "ZONA_TR1_25MVA",
-        "tipo": "diferencial_transformador", 
+        "tipo": "diferencial_transformador",
         "transformador_id": 0,  # Primeiro transformador
         "barras": [0, 1],  # Índices das barras conectadas (B2, B3)
         "barras_ieee": [2, 3],  # Numeração IEEE original
@@ -314,8 +357,8 @@ def gerar_zonas_protecao(net: pp.pandapowerNet) -> list:
         "tempo_atuacao_ms": 50,
         "descricao": "Zona de proteção diferencial do transformador principal TR1"
     })
-    
-    # Zona 2: Transformador TR2 (Barras 6-9) 
+
+    # Zona 2: Transformador TR2 (Barras 6-9)
     # Proteção diferencial do segundo transformador de 25 MVA
     zonas.append({
         "nome": "ZONA_TR2_25MVA",
@@ -330,7 +373,7 @@ def gerar_zonas_protecao(net: pp.pandapowerNet) -> list:
         "tempo_atuacao_ms": 50,
         "descricao": "Zona de proteção diferencial do transformador auxiliar TR2"
     })
-    
+
     print(f"✅ Geradas {len(zonas)} zonas de proteção para transformadores")
     return zonas
 

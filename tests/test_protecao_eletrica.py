@@ -46,8 +46,10 @@ def test_rele27_e_59_atuacao():
     Cada um deve atuar conforme os limiares configurados.
     """
     # Para Rele27 e Rele59, corrente_disparo representa o limiar de tensão
-    rele27 = Rele27(nome="27-1", barra_origem=1, corrente_disparo=0.85)  # tensão mínima
-    rele59 = Rele59(nome="59-1", barra_origem=1, corrente_disparo=1.10)  # tensão máxima
+    rele27 = Rele27(nome="27-1", barra_origem=1,
+                    corrente_disparo=0.85)  # tensão mínima
+    rele59 = Rele59(nome="59-1", barra_origem=1,
+                    corrente_disparo=1.10)  # tensão máxima
 
     assert rele27.atuar(0.80) is True  # 0.80 <= 0.85
     assert rele27.atuar(0.90) is False  # 0.90 > 0.85

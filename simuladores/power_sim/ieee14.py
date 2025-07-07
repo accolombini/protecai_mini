@@ -42,7 +42,7 @@ class IEEE14System:
             import json
             with open(path, 'r', encoding='utf-8') as f:
                 data = json.load(f)
-            
+
             # Extrai a rede PandaPower da string JSON
             self.net = pp.from_json_string(data["pandapower_net"])
         except Exception as e:

@@ -18,9 +18,9 @@
 Testes automatizados para verificar a consistência do arquivo ieee14_protecao.json
 """
 
+from pathlib import Path
 import pytest
 import pandapower as pp
-from pathlib import Path
 
 
 def carregar_rede():
@@ -28,20 +28,20 @@ def carregar_rede():
     ).parents[1] / "simuladores" / "power_sim" / "data" / "ieee14_protecao.json"
     if not json_path.exists():
         raise FileNotFoundError(f"❌ Arquivo não encontrado: {json_path}")
-    
+
     # Carrega o JSON customizado
     import json
     with open(json_path, 'r', encoding='utf-8') as f:
         data = json.load(f)
-    
+
     # Extrai a rede PandaPower da string JSON
     rede = pp.from_json_string(data["pandapower_net"])
-    
+
     # Adiciona os dados de proteção à rede para compatibilidade com os testes
     rede.protection_devices = data["protection_devices"]
     if "protection_zones" in data:
         rede.protection_zones = data["protection_zones"]
-    
+
     return rede
 
 
@@ -60,25 +60,26 @@ def test_estrutura_geral(rede):
 
 def test_dispositivos_de_protecao(rede):
     dispositivos = rede.protection_devices
-    assert isinstance(dispositivos, dict), "Dispositivos de proteção devem ser um dicionário."
-    
+    assert isinstance(
+        dispositivos, dict), "Dispositivos de proteção devem ser um dicionário."
+
     # Verifica se as categorias principais existem
     assert "reles" in dispositivos, "Relés ausentes."
     assert "disjuntores" in dispositivos, "Disjuntores ausentes."
     assert "fusiveis" in dispositivos, "Fusíveis ausentes."
-    
+
     # Verifica relés
     for i, rele in enumerate(dispositivos["reles"]):
         assert "id" in rele, f"Relé {i} sem campo 'id'."
         assert "element_type" in rele, f"Relé {i} sem campo 'element_type'."
         assert "element_id" in rele, f"Relé {i} sem campo 'element_id'."
-    
+
     # Verifica disjuntores
     for i, disj in enumerate(dispositivos["disjuntores"]):
         assert "id" in disj, f"Disjuntor {i} sem campo 'id'."
         assert "element_type" in disj, f"Disjuntor {i} sem campo 'element_type'."
         assert "element_id" in disj, f"Disjuntor {i} sem campo 'element_id'."
-    
+
     # Verifica fusíveis
     for i, fus in enumerate(dispositivos["fusiveis"]):
         assert "id" in fus, f"Fusível {i} sem campo 'id'."
@@ -90,7 +91,7 @@ def test_zonas_de_protecao(rede):
     # Se não há zonas de proteção definidas, pula o teste
     if not hasattr(rede, "protection_zones") or rede.protection_zones is None:
         pytest.skip("Zonas de proteção não implementadas ainda")
-    
+
     zonas = rede.protection_zones
     for zona in zonas:
         assert "nome" in zona and zona["nome"], "Zona sem nome."
@@ -107,7 +108,7 @@ def test_barras_conectadas(rede):
     # Barras conectadas por linhas e transformadores
     conectadas = set(rede.line.from_bus).union(set(rede.line.to_bus))
     conectadas |= set(rede.trafo.hv_bus).union(set(rede.trafo.lv_bus))
-    
+
     # Verifica se há barras isoladas
     for idx in rede.bus.index:
         if idx not in conectadas:

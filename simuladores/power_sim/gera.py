@@ -37,10 +37,10 @@ LINHAS = [
     (7, 9),
     (9, 10),
     (10, 14),
-    
+
     # Conexões de malha (criam redundância e múltiplos caminhos)
     (2, 6),    # Bypass direto B2 → B6
-    (3, 7),    # Bypass B3 → B7 
+    (3, 7),    # Bypass B3 → B7
     (6, 9),    # Bypass B6 → B9
     (7, 10),   # Bypass B7 → B10
     (9, 14),   # Bypass B9 → B14

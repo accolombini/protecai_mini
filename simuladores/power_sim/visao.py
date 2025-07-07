@@ -5,15 +5,15 @@
     - Salva a visualização em um arquivo PNG.        
 '''
 
+import sys
+from pathlib import Path
+import numpy as np
+import matplotlib.pyplot as plt
 import json
 import pandapower as pp
 import pandas as pd
 import matplotlib
 matplotlib.use('Agg')  # Use backend sem interface gráfica
-import matplotlib.pyplot as plt
-import numpy as np
-from pathlib import Path
-import sys
 
 # Paleta e símbolos
 COLOR_BARRA = "blue"
@@ -42,23 +42,28 @@ def carregar_json(path_json):
         with open(path_json, "r", encoding="utf-8") as f:
             data = json.load(f)
         print("✅ JSON carregado com sucesso")
-        
+
         print("🔄 Convertendo rede PandaPower...")
         # O pandapower_net já é uma string JSON, usar diretamente
         net_json_str = data["pandapower_net"]
-        print(f"🔍 Tipo: {type(net_json_str)}, Tamanho: {len(net_json_str)} chars")
+        print(
+            f"🔍 Tipo: {type(net_json_str)}, Tamanho: {len(net_json_str)} chars")
         net = pp.from_json_string(net_json_str)
-        print(f"✅ Rede carregada: {len(net.bus)} barras, {len(net.line)} linhas")
-        
+        print(
+            f"✅ Rede carregada: {len(net.bus)} barras, {len(net.line)} linhas")
+
         protection_devices = data["protection_devices"]
-        print(f"✅ Dispositivos de proteção: {len(protection_devices['reles'])} relés")
-        
-        bus_geodata = pd.DataFrame.from_dict(data["bus_geodata"], orient="index")
-        line_geodata = pd.DataFrame.from_dict(data["line_geodata"], orient="index")
+        print(
+            f"✅ Dispositivos de proteção: {len(protection_devices['reles'])} relés")
+
+        bus_geodata = pd.DataFrame.from_dict(
+            data["bus_geodata"], orient="index")
+        line_geodata = pd.DataFrame.from_dict(
+            data["line_geodata"], orient="index")
         bus_geodata.index = bus_geodata.index.astype(int)
         line_geodata.index = line_geodata.index.astype(int)
         print("✅ Geodados processados")
-        
+
         return net, protection_devices, bus_geodata, line_geodata
     except Exception as e:
         print(f"❌ Erro ao carregar JSON: {e}")
@@ -67,14 +72,15 @@ def carregar_json(path_json):
 
 def plotar_rede(net, bus_geodata, line_geodata, protection_devices, path_out):
     print("🎨 Iniciando plotagem da rede...")
-    
+
     # Conjunto de índices válidos
     barras_validas = set(net.bus.index)
     linhas_validas = set(net.line.index)
     trafos_validos = set(net.trafo.index)
     cargas_validas = set(net.load.index)
-    
-    print(f"📊 Elementos válidos - Barras: {len(barras_validas)}, Linhas: {len(linhas_validas)}, Trafos: {len(trafos_validos)}")
+
+    print(
+        f"📊 Elementos válidos - Barras: {len(barras_validas)}, Linhas: {len(linhas_validas)}, Trafos: {len(trafos_validos)}")
 
     fig, ax = plt.subplots(figsize=(12, 8))
     plt.title("ProtecAI_Mini Rede de Teste",
