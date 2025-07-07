@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import './index.css'
 
 // Tipos para dados da API
@@ -30,7 +30,7 @@ interface ProtectionDevice {
   curva?: string
   pickup?: number
   time_delay?: number
-  settings?: any
+  settings?: Record<string, unknown>
 }
 
 interface ProtectionData {
@@ -64,6 +64,75 @@ interface ScenarioRequest {
   training_episodes: number
 }
 
+interface DeviceAction {
+  id?: string
+  device_id: string
+  action: string
+  time: number
+  reason: string
+  type?: string
+}
+
+interface StandardEvaluation {
+  compliant: boolean
+  score: number
+  violations: string[]
+  recommendations: string[]
+  details?: string
+}
+
+interface RLImpact {
+  enabled?: boolean
+  standards_improved?: number
+  overall_improvement?: string
+  recommendation?: string
+}
+
+interface ComplianceAssessment {
+  overall_compliance: boolean
+  score: number
+  overall_score?: number
+  safety_level?: 'EXCELLENT' | 'ACCEPTABLE' | 'MARGINAL' | 'CRITICAL_FAILURE'
+  standards_evaluation: Record<string, StandardEvaluation>
+  recommendations: string[]
+  rl_impact?: RLImpact
+}
+
+interface FaultAnalysis {
+  current: number
+  clearance_time: number
+  severity_level: 'HIGH' | 'MEDIUM' | 'LOW'
+}
+
+interface RLOptimizationImprovement {
+  response_time?: string
+  coordination_score?: string
+}
+
+interface RLOptimization {
+  episodes_trained?: number
+  final_reward?: number
+  improvement?: RLOptimizationImprovement
+}
+
+interface SystemImpact {
+  affected_buses?: number
+  power_interrupted?: string
+  restoration_time?: string
+}
+
+interface SimulationResults {
+  power_flow_converged: boolean
+  voltage_violations: unknown[]
+  current_violations: unknown[]
+  device_actions: DeviceAction[]
+  protection_time: number
+  coordination_check: boolean
+  fault_analysis?: FaultAnalysis
+  rl_optimization?: RLOptimization
+  system_impact?: SystemImpact
+}
+
 interface ScenarioResult {
   scenario: {
     type: string
@@ -71,8 +140,8 @@ interface ScenarioResult {
     severity: number
     rl_enabled: boolean
   }
-  results: any
-  compliance_assessment?: any
+  results: SimulationResults
+  compliance_assessment?: ComplianceAssessment
   timestamp: string
 }
 
@@ -103,7 +172,7 @@ function App() {
   const [scenarioLoading, setScenarioLoading] = useState(false)
 
   // Função para buscar dados da API
-  const fetchAPIData = async () => {
+  const fetchAPIData = useCallback(async () => {
     try {
       setIsLoading(true)
       setError(null)
@@ -155,7 +224,7 @@ function App() {
     } finally {
       setIsLoading(false)
     }
-  }
+  }, []) // useCallback dependencies
 
   // Função para buscar status de conformidade
   const fetchComplianceStatus = async () => {
@@ -250,7 +319,7 @@ function App() {
   // Carregar dados na inicialização
   useEffect(() => {
     fetchAPIData()
-  }, [])
+  }, [fetchAPIData])
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -673,9 +742,18 @@ function NetworkTab({ networkInfo, systemState }: { networkInfo: NetworkInfo | n
   )
 }
 
+interface AnalysisResults {
+  compliance?: ComplianceAssessment
+  rl_optimization?: RLOptimization
+  total_devices?: number
+  coordination_issues?: number
+  coordination_quality?: string
+  // Adicionar outras propriedades conforme necessário
+}
+
 // Componente de Proteção
 function ProtectionTab({ protectionData }: { protectionData: ProtectionData | null }) {
-  const [analysisResults, setAnalysisResults] = useState<any>(null)
+  const [analysisResults, setAnalysisResults] = useState<AnalysisResults | null>(null)
   const [isAnalyzing, setIsAnalyzing] = useState(false)
 
   // Executar análise de coordenação
@@ -724,7 +802,7 @@ function ProtectionTab({ protectionData }: { protectionData: ProtectionData | nu
 
       if (response.ok) {
         const data = await response.json()
-        setAnalysisResults((prev: any) => ({ ...prev, compliance: data }))
+        setAnalysisResults((prev: AnalysisResults | null) => ({ ...prev, compliance: data }))
       } else {
         console.error('Erro na verificação de conformidade:', response.statusText)
       }
@@ -756,7 +834,7 @@ function ProtectionTab({ protectionData }: { protectionData: ProtectionData | nu
 
       if (response.ok) {
         const data = await response.json()
-        setAnalysisResults((prev: any) => ({ ...prev, rl_optimization: data }))
+        setAnalysisResults((prev: AnalysisResults | null) => ({ ...prev, rl_optimization: data }))
       } else {
         console.error('Erro na otimização RL:', response.statusText)
       }
@@ -930,12 +1008,31 @@ function ProtectionTab({ protectionData }: { protectionData: ProtectionData | nu
   )
 }
 
+interface SimulationScenarioResult extends ScenarioResult {
+  is_rl_optimized?: boolean
+  protection_actions?: number
+  response_time?: number | string
+  coordination_ok?: boolean
+  norm_compliance?: boolean
+  fault_current?: number | string
+  protection_devices_triggered?: number
+}
+
+interface RLTrainingData {
+  episodes?: number
+  reward?: number
+  convergence?: boolean
+  training_id?: string
+  status?: string
+  // Adicionar outras propriedades conforme necessário
+}
+
 // Componente de Simulação
 function SimulationTab({ systemState }: { systemState: SystemState }) {
   const [selectedScenario, setSelectedScenario] = useState('curto_circuito')
   const [isSimulating, setIsSimulating] = useState(false)
-  const [simulationResults, setSimulationResults] = useState<any>(null)
-  const [rlTraining, setRlTraining] = useState<any>(null)
+  const [simulationResults, setSimulationResults] = useState<SimulationScenarioResult | null>(null)
+  const [rlTraining, setRlTraining] = useState<RLTrainingData | null>(null)
   const [isTraining, setIsTraining] = useState(false)
   const [episodes, setEpisodes] = useState(1000)
   const [learningRate, setLearningRate] = useState(0.001)
@@ -971,7 +1068,21 @@ function SimulationTab({ systemState }: { systemState: SystemState }) {
         console.error('Erro na simulação:', response.statusText)
         // Fallback para dados simulados
         setSimulationResults({
-          scenario: selectedScenario,
+          scenario: {
+            type: selectedScenario,
+            location: 'Bus_1',
+            severity: 1.0,
+            rl_enabled: false
+          },
+          results: {
+            power_flow_converged: true,
+            voltage_violations: [],
+            current_violations: [],
+            device_actions: [],
+            protection_time: 0.15,
+            coordination_check: true
+          },
+          timestamp: new Date().toISOString(),
           protection_actions: Math.floor(Math.random() * 5) + 1,
           response_time: (Math.random() * 0.5 + 0.1).toFixed(3),
           coordination_ok: Math.random() > 0.3,
@@ -984,7 +1095,21 @@ function SimulationTab({ systemState }: { systemState: SystemState }) {
       console.error('Erro ao executar simulação:', error)
       // Fallback para dados simulados em caso de erro
       setSimulationResults({
-        scenario: selectedScenario,
+        scenario: {
+          type: selectedScenario,
+          location: 'Bus_1',
+          severity: 1.0,
+          rl_enabled: false
+        },
+        results: {
+          power_flow_converged: true,
+          voltage_violations: [],
+          current_violations: [],
+          device_actions: [],
+          protection_time: 0.15,
+          coordination_check: true
+        },
+        timestamp: new Date().toISOString(),
         protection_actions: Math.floor(Math.random() * 5) + 1,
         response_time: (Math.random() * 0.5 + 0.1).toFixed(3),
         coordination_ok: Math.random() > 0.3,
@@ -1640,7 +1765,7 @@ function ScenariosTab({
             <div className="mt-6 bg-gray-50 rounded-lg p-4">
               <h4 className="font-medium text-gray-900 mb-3">🔌 Ações dos Dispositivos</h4>
               <div className="space-y-2">
-                {scenarioResult.results.device_actions.map((action: any, index: number) => (
+                {scenarioResult.results.device_actions.map((action: DeviceAction, index: number) => (
                   <div key={index} className="flex items-center justify-between p-2 bg-white rounded border">
                     <div className="flex items-center space-x-3">
                       <span className="text-sm font-medium">{action.id}</span>
@@ -1706,30 +1831,33 @@ function ScenariosTab({
               </div>
               
               {/* Score Geral */}
-              <div className="mb-4 p-3 bg-white rounded border">
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-sm font-medium text-gray-700">Score Geral de Conformidade</span>
-                  <div className="flex items-center space-x-2">
-                    <span className={`text-lg font-bold ${
-                      scenarioResult.compliance_assessment.overall_score > 0.9 ? 'text-green-600' :
-                      scenarioResult.compliance_assessment.overall_score > 0.8 ? 'text-blue-600' :
-                      scenarioResult.compliance_assessment.overall_score > 0.7 ? 'text-yellow-600' :
-                      'text-red-600'
-                    }`}>
-                      {(scenarioResult.compliance_assessment.overall_score * 100).toFixed(1)}%
-                    </span>
-                    <span className={`text-sm px-2 py-1 rounded font-medium ${
-                      scenarioResult.compliance_assessment.overall_score > 0.9 ? 'bg-green-100 text-green-800' :
-                      scenarioResult.compliance_assessment.overall_score > 0.8 ? 'bg-blue-100 text-blue-800' :
-                      scenarioResult.compliance_assessment.overall_score > 0.7 ? 'bg-yellow-100 text-yellow-800' :
-                      'bg-red-100 text-red-800'
-                    }`}>
-                      {scenarioResult.compliance_assessment.overall_score > 0.9 ? '🏆 EXCELENTE' :
-                       scenarioResult.compliance_assessment.overall_score > 0.8 ? '✅ APROVADO' :
-                       scenarioResult.compliance_assessment.overall_score > 0.7 ? '⚠️ MARGINAL' : '🚨 REPROVADO'}
-                    </span>
+              {scenarioResult.compliance_assessment.overall_score !== undefined && (
+                <div className="mb-4 p-3 bg-white rounded border">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-sm font-medium text-gray-700">Score Geral de Conformidade</span>
+                    <div className="flex items-center space-x-2">
+                      <span className={`text-lg font-bold ${
+                        scenarioResult.compliance_assessment.overall_score > 0.9 ? 'text-green-600' :
+                        scenarioResult.compliance_assessment.overall_score > 0.8 ? 'text-blue-600' :
+                        scenarioResult.compliance_assessment.overall_score > 0.7 ? 'text-yellow-600' :
+                        'text-red-600'
+                      }`}>
+                        {(scenarioResult.compliance_assessment.overall_score * 100).toFixed(1)}%
+                      </span>
+                      <span className={`text-sm px-2 py-1 rounded font-medium ${
+                        scenarioResult.compliance_assessment.overall_score > 0.9 ? 'bg-green-100 text-green-800' :
+                        scenarioResult.compliance_assessment.overall_score > 0.8 ? 'bg-blue-100 text-blue-800' :
+                        scenarioResult.compliance_assessment.overall_score > 0.7 ? 'bg-yellow-100 text-yellow-800' :
+                        'bg-red-100 text-red-800'
+                      }`}>
+                        {scenarioResult.compliance_assessment.overall_score > 0.9 ? '🏆 EXCELENTE' :
+                         scenarioResult.compliance_assessment.overall_score > 0.8 ? '✅ APROVADO' :
+                         scenarioResult.compliance_assessment.overall_score > 0.7 ? '⚠️ MARGINAL' : '🚨 REPROVADO'}
+                      </span>
+                    </div>
                   </div>
                 </div>
+              )}
                 
                 {/* Nível de Segurança para Petróleo */}
                 {scenarioResult.compliance_assessment.safety_level && (
@@ -1759,11 +1887,11 @@ function ScenariosTab({
                     </div>
                   </div>
                 )}
-              </div>
-
+              
               {/* Padrões Individuais */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-4">
-                {Object.entries(scenarioResult.compliance_assessment.standards_evaluation).map(([standard, data]: [string, any]) => (
+              {scenarioResult.compliance_assessment && (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-4">
+                  {Object.entries(scenarioResult.compliance_assessment.standards_evaluation).map(([standard, data]: [string, StandardEvaluation]) => (
                   <div key={standard} className="p-3 bg-white rounded border">
                     <div className="flex items-center justify-between mb-2">
                       <span className="text-sm font-medium text-gray-700">{standard}</span>
@@ -1781,39 +1909,40 @@ function ScenariosTab({
                     </div>
                   </div>
                 ))}
-              </div>
+                </div>
+              )}
 
               {/* Impacto do RL */}
-              {scenarioResult.compliance_assessment.rl_impact && (
+              {scenarioResult.compliance_assessment?.rl_impact && (
                 <div className="p-3 bg-purple-50 rounded border border-purple-200">
                   <h5 className="text-sm font-medium text-gray-900 mb-2">🧠 Avaliação do Reinforcement Learning</h5>
                   <div className="space-y-1 text-sm">
                     <div className="flex justify-between">
                       <span className="text-gray-600">Status RL:</span>
                       <span className="font-medium">
-                        {scenarioResult.compliance_assessment.rl_impact.enabled ? '✅ Habilitado' : '❌ Desabilitado'}
+                        {scenarioResult.compliance_assessment?.rl_impact?.enabled ? '✅ Habilitado' : '❌ Desabilitado'}
                       </span>
                     </div>
-                    {scenarioResult.compliance_assessment.rl_impact.enabled && (
+                    {scenarioResult.compliance_assessment?.rl_impact?.enabled && (
                       <>
                         <div className="flex justify-between">
                           <span className="text-gray-600">Padrões Atendidos:</span>
-                          <span className="font-medium">{scenarioResult.compliance_assessment.rl_impact.standards_improved}</span>
+                          <span className="font-medium">{scenarioResult.compliance_assessment?.rl_impact?.standards_improved}</span>
                         </div>
                         <div className="flex justify-between">
                           <span className="text-gray-600">Melhoria Geral:</span>
                           <span className={`font-medium ${
-                            scenarioResult.compliance_assessment.rl_impact.overall_improvement === 'Significativa' ? 'text-green-600' :
-                            scenarioResult.compliance_assessment.rl_impact.overall_improvement === 'Moderada' ? 'text-yellow-600' :
+                            scenarioResult.compliance_assessment?.rl_impact?.overall_improvement === 'Significativa' ? 'text-green-600' :
+                            scenarioResult.compliance_assessment?.rl_impact?.overall_improvement === 'Moderada' ? 'text-yellow-600' :
                             'text-red-600'
                           }`}>
-                            {scenarioResult.compliance_assessment.rl_impact.overall_improvement}
+                            {scenarioResult.compliance_assessment?.rl_impact?.overall_improvement}
                           </span>
                         </div>
                       </>
                     )}
                     <div className="mt-2 p-2 bg-blue-50 rounded text-xs text-blue-700">
-                      💡 <strong>Recomendação:</strong> {scenarioResult.compliance_assessment.rl_impact.recommendation}
+                      💡 <strong>Recomendação:</strong> {scenarioResult.compliance_assessment?.rl_impact?.recommendation}
                     </div>
                   </div>
                 </div>
