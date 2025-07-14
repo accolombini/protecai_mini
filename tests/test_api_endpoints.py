@@ -27,7 +27,7 @@ class TestAPIEndpoints:
             mock_response.status_code = 200
             mock_response.json.return_value = {"status": "healthy"}
             mock_get.return_value = mock_response
-            
+
             response = requests.get(f"{API_BASE_URL}/health")
             assert response.status_code == 200
             data = response.json()
@@ -43,7 +43,7 @@ class TestAPIEndpoints:
                 "version": "1.0.0"
             }
             mock_get.return_value = mock_response
-            
+
             response = requests.get(f"{API_BASE_URL}/info")
             assert response.status_code == 200
 
@@ -58,7 +58,7 @@ class TestAPIEndpoints:
                 "lines": 20
             }
             mock_get.return_value = mock_response
-            
+
             response = requests.get(f"{API_BASE_URL}/api/v1/network/info")
             assert response.status_code == 200
 
@@ -75,8 +75,9 @@ class TestAPIEndpoints:
                 }
             }
             mock_get.return_value = mock_response
-            
-            response = requests.get(f"{API_BASE_URL}/api/v1/protection/devices")
+
+            response = requests.get(
+                f"{API_BASE_URL}/api/v1/protection/devices")
             assert response.status_code == 200
 
     def test_compliance_check_endpoint(self):
@@ -94,7 +95,7 @@ class TestAPIEndpoints:
                 }
             }
             mock_post.return_value = mock_response
-            
+
             data = {
                 "standards": ["NBR_5410", "IEEE_C37_112", "IEC_61850", "API_RP_14C"]
             }
@@ -118,7 +119,7 @@ class TestAPIEndpoints:
                 }
             }
             mock_post.return_value = mock_response
-            
+
             data = {
                 "scenario_type": "equipment_failure",
                 "location": "Bus_07",
@@ -148,7 +149,7 @@ class TestAPIEndpoints:
             mock_response.status_code = expected_status
             mock_response.json.return_value = {"status": "ok"}
             mock_get.return_value = mock_response
-            
+
             response = requests.get(f"{API_BASE_URL}{endpoint}")
             assert response.status_code == expected_status
 
@@ -159,7 +160,7 @@ class TestAPIEndpoints:
             mock_response.status_code = 404
             mock_response.json.return_value = {"detail": "Not found"}
             mock_get.return_value = mock_response
-            
+
             response = requests.get(f"{API_BASE_URL}/api/v1/nonexistent")
             assert response.status_code == 404
 
@@ -167,7 +168,7 @@ class TestAPIEndpoints:
         """Testa tratamento de timeout da API."""
         with patch('requests.get') as mock_get:
             mock_get.side_effect = requests.exceptions.Timeout()
-            
+
             with pytest.raises(requests.exceptions.Timeout):
                 requests.get(f"{API_BASE_URL}/health", timeout=1)
 
@@ -177,9 +178,9 @@ def main():
     """Executa os testes como script standalone."""
     import pytest
     import sys
-    
+
     print("🧪 Executando testes da API ProtecAI Mini...")
-    
+
     # Executar testes
     exit_code = pytest.main([
         __file__,
@@ -187,12 +188,12 @@ def main():
         "--tb=short",
         "--no-header"
     ])
-    
+
     if exit_code == 0:
         print("✅ Todos os testes passaram!")
     else:
         print("❌ Alguns testes falharam!")
-    
+
     return exit_code
 
 

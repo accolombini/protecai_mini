@@ -3,6 +3,7 @@ Router para gerenciamento de dispositivos de proteção.
 Endpoints para configuração de relés, disjuntores e fusíveis.
 """
 
+import os
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 from typing import List, Dict, Optional, Any
@@ -43,8 +44,8 @@ class ProtectionZone(BaseModel):
 
 
 # Caminho para os dados
-import os
-BASE_DIR = Path(__file__).parent.parent.parent.parent.parent  # Cinco níveis acima: routers -> api -> backend -> src -> protecai_mini
+# Cinco níveis acima: routers -> api -> backend -> src -> protecai_mini
+BASE_DIR = Path(__file__).parent.parent.parent.parent.parent
 DATA_PATH = BASE_DIR / "simuladores/power_sim/data/ieee14_protecao.json"
 
 
@@ -430,7 +431,8 @@ async def check_compliance(request: ComplianceRequest):
         devices, zones = load_protection_data()
 
         # Calcular métricas de conformidade
-        total_devices = sum(len(device_list) for device_list in devices.values())
+        total_devices = sum(len(device_list)
+                            for device_list in devices.values())
         enabled_devices = sum(
             sum(1 for d in device_list if d.get("enabled", True))
             for device_list in devices.values()
@@ -451,7 +453,8 @@ async def check_compliance(request: ComplianceRequest):
 
             elif standard == "IEEE_C37_112":
                 # Verificar coordenação de proteção
-                coordination_score = min(0.9, enabled_devices / max(total_devices, 1))
+                coordination_score = min(
+                    0.9, enabled_devices / max(total_devices, 1))
                 compliance_results[standard] = {
                     "compliant": coordination_score > 0.8,
                     "score": coordination_score,
@@ -463,16 +466,19 @@ async def check_compliance(request: ComplianceRequest):
                 # NBR 5410 para plataformas petrolíferas - REALISTA
                 network_loaded = total_devices > 0
                 protection_configured = enabled_devices > 0
-                
+
                 # Para petróleo: requisitos ajustados para nossa configuração real
-                has_multiple_protection_types = len([k for k, v in devices.items() if len(v) > 0]) >= 2  # 2+ tipos (era 3)
-                sufficient_devices = enabled_devices >= 4  # Mínimo 4 dispositivos (era 6)
+                has_multiple_protection_types = len(
+                    # 2+ tipos (era 3)
+                    [k for k, v in devices.items() if len(v) > 0]) >= 2
+                # Mínimo 4 dispositivos (era 6)
+                sufficient_devices = enabled_devices >= 4
                 good_coverage = enabled_devices >= 10  # Boa cobertura com 10+ dispositivos
-                
+
                 # Sistema é conforme com requisitos realistas
-                is_compliant = (network_loaded and protection_configured and 
-                               has_multiple_protection_types and sufficient_devices)
-                
+                is_compliant = (network_loaded and protection_configured and
+                                has_multiple_protection_types and sufficient_devices)
+
                 if is_compliant and good_coverage:
                     compliance_score = 0.95  # Excelente com boa cobertura
                 elif is_compliant:
@@ -480,15 +486,16 @@ async def check_compliance(request: ComplianceRequest):
                 else:
                     # Penalizar moderadamente se não atende requisitos
                     compliance_score = max(0.3, enabled_devices / 15.0)
-                
+
                 issues = []
                 if not has_multiple_protection_types:
-                    issues.append("Falta diversidade de proteção (mín. 2 tipos)")
+                    issues.append(
+                        "Falta diversidade de proteção (mín. 2 tipos)")
                 if not sufficient_devices:
                     issues.append("Dispositivos insuficientes para segurança")
                 if not network_loaded:
                     issues.append("Rede não carregada")
-                
+
                 compliance_results[standard] = {
                     "compliant": is_compliant,
                     "score": compliance_score,
@@ -499,22 +506,24 @@ async def check_compliance(request: ComplianceRequest):
             elif standard == "API_RP_14C":
                 # API RP 14C - NORMA CRÍTICA PARA PLATAFORMAS PETROLÍFERAS
                 # Requisitos ajustados para aceitar configuração atual (25 relés + 15 disjuntores)
-                
+
                 # Verificar se há proteção redundante (essencial para petróleo)
                 relay_count = len(devices.get("reles", []))
                 breaker_count = len(devices.get("disjuntores", []))
                 fuse_count = len(devices.get("fuseis", []))
-                
+
                 # API RP 14C exige múltiplas camadas de proteção - critérios ajustados
                 has_primary_backup = relay_count >= 2 and breaker_count >= 2
                 # Aceitar sistema sem fusíveis se há proteção redundante suficiente
-                has_emergency_protection = fuse_count >= 1 or (relay_count >= 10 and breaker_count >= 10)
-                total_protection_adequate = (relay_count + breaker_count + fuse_count) >= 8
-                
+                has_emergency_protection = fuse_count >= 1 or (
+                    relay_count >= 10 and breaker_count >= 10)
+                total_protection_adequate = (
+                    relay_count + breaker_count + fuse_count) >= 8
+
                 # Critérios para petróleo com configuração atual
-                safety_criteria_met = (has_primary_backup and has_emergency_protection and 
-                                     total_protection_adequate)
-                
+                safety_criteria_met = (has_primary_backup and has_emergency_protection and
+                                       total_protection_adequate)
+
                 if safety_criteria_met:
                     safety_score = 0.98  # Excelente quando atende critérios críticos
                 else:
@@ -522,17 +531,21 @@ async def check_compliance(request: ComplianceRequest):
                     if relay_count >= 20 and breaker_count >= 10:
                         safety_score = 0.90  # Boa configuração mesmo sem fusíveis
                     else:
-                        safety_score = max(0.0, min(0.5, enabled_devices / 10.0))
-                
+                        safety_score = max(
+                            0.0, min(0.5, enabled_devices / 10.0))
+
                 issues = []
                 if not has_primary_backup:
-                    issues.append("CRÍTICO: Proteção primária/backup insuficiente")
+                    issues.append(
+                        "CRÍTICO: Proteção primária/backup insuficiente")
                 if not has_emergency_protection:
                     if fuse_count == 0 and (relay_count < 10 or breaker_count < 10):
-                        issues.append("AVISO: Sem fusíveis - proteção compensada por redundância")
+                        issues.append(
+                            "AVISO: Sem fusíveis - proteção compensada por redundância")
                 if not total_protection_adequate:
-                    issues.append("CRÍTICO: Cobertura de proteção inadequada para petróleo")
-                
+                    issues.append(
+                        "CRÍTICO: Cobertura de proteção inadequada para petróleo")
+
                 compliance_results[standard] = {
                     "compliant": safety_criteria_met,
                     "score": safety_score,
@@ -549,8 +562,10 @@ async def check_compliance(request: ComplianceRequest):
                 }
 
         # Calcular score geral
-        overall_score = sum(result["score"] for result in compliance_results.values()) / len(compliance_results)
-        overall_compliant = all(result["compliant"] for result in compliance_results.values())
+        overall_score = sum(
+            result["score"] for result in compliance_results.values()) / len(compliance_results)
+        overall_compliant = all(result["compliant"]
+                                for result in compliance_results.values())
 
         return {
             "overall_compliance": {
@@ -591,17 +606,17 @@ async def run_protection_scenario(request: ScenarioRequest):
         valid_scenarios = ["fault", "load_change", "equipment_failure"]
         if request.scenario_type not in valid_scenarios:
             raise HTTPException(
-                status_code=400, 
+                status_code=400,
                 detail=f"Tipo de cenário inválido: '{request.scenario_type}'. Tipos válidos: {valid_scenarios}"
             )
-        
+
         # Validar severity
         if not (0.0 <= request.severity <= 1.0):
             raise HTTPException(
                 status_code=400,
                 detail=f"Severidade deve estar entre 0.0 e 1.0, recebido: {request.severity}"
             )
-        
+
         devices, zones = load_protection_data()
 
         # Simular diferentes tipos de cenários
@@ -646,12 +661,13 @@ def simulate_fault_scenario(location: str, severity: float, use_rl: bool, episod
     """Simular cenário de falta com parâmetros ULTRA-CONSERVADORES para petróleo."""
     import random
     import numpy as np
-    
+
     # Para petróleo: parâmetros muito mais conservadores e seguros
     # Corrente de falha ajustada para proteção mais rápida
-    base_current = 800 + (severity * 1500)  # Reduzido: 800-2300A ao invés de 1000-4000A
+    # Reduzido: 800-2300A ao invés de 1000-4000A
+    base_current = 800 + (severity * 1500)
     fault_current = base_current
-    
+
     # Tempo MUITO mais rápido para petróleo (segurança crítica)
     if use_rl:
         # RL deve otimizar para tempos ultra-rápidos MAS com processamento real
@@ -663,10 +679,10 @@ def simulate_fault_scenario(location: str, severity: float, use_rl: bool, episod
         # Sem RL: tempos aceitáveis mas não excelentes
         base_time = max(0.05, 0.18 - severity * 0.06)  # 50-180ms sem RL
         fault_time = base_time * random.uniform(0.9, 1.2)
-    
+
     # Dispositivos com atuação mais conservadora e coordenada
     acting_devices = []
-    
+
     # Proteção primária SEMPRE ativa (obrigatório para petróleo)
     primary_relay = {
         "id": f"relay_primary_{location}",
@@ -676,9 +692,10 @@ def simulate_fault_scenario(location: str, severity: float, use_rl: bool, episod
         "current": fault_current
     }
     acting_devices.append(primary_relay)
-    
+
     # Proteção de backup SEMPRE presente (redundância crítica)
-    backup_time = fault_time + random.uniform(0.03, 0.05)  # 30-50ms após primária
+    backup_time = fault_time + \
+        random.uniform(0.03, 0.05)  # 30-50ms após primária
     backup_relay = {
         "id": f"relay_backup_{location}",
         "type": "relay",
@@ -687,9 +704,10 @@ def simulate_fault_scenario(location: str, severity: float, use_rl: bool, episod
         "current": fault_current
     }
     acting_devices.append(backup_relay)
-    
+
     # Disjuntor com tempo otimizado
-    breaker_time = fault_time + random.uniform(0.01, 0.03)  # 10-30ms após relay
+    breaker_time = fault_time + \
+        random.uniform(0.01, 0.03)  # 10-30ms após relay
     breaker = {
         "id": f"breaker_{location}",
         "type": "circuit_breaker",
@@ -698,10 +716,11 @@ def simulate_fault_scenario(location: str, severity: float, use_rl: bool, episod
         "current": fault_current
     }
     acting_devices.append(breaker)
-    
+
     # Fusível de emergência para casos extremos
     if fault_current > 1500:
-        fuse_time = fault_time + random.uniform(0.08, 0.12)  # Backup de emergência
+        # Backup de emergência
+        fuse_time = fault_time + random.uniform(0.08, 0.12)
         emergency_fuse = {
             "id": f"fuse_emergency_{location}",
             "type": "fuse",
@@ -710,16 +729,16 @@ def simulate_fault_scenario(location: str, severity: float, use_rl: bool, episod
             "current": fault_current
         }
         acting_devices.append(emergency_fuse)
-    
+
     # Coordenação EXCELENTE (requisito para petróleo)
     primary_effectiveness = 0.96 + random.uniform(0.02, 0.04)  # 96-100%
     backup_effectiveness = 0.92 + random.uniform(0.03, 0.06)  # 92-98%
-    
+
     if use_rl:
         # RL melhora significativamente a coordenação
         primary_effectiveness = min(1.0, primary_effectiveness + 0.02)
         backup_effectiveness = min(1.0, backup_effectiveness + 0.03)
-    
+
     coordination_results = {
         "primary_protection": {
             "activated": True,
@@ -732,17 +751,19 @@ def simulate_fault_scenario(location: str, severity: float, use_rl: bool, episod
             "effectiveness": backup_effectiveness
         }
     }
-    
+
     # Otimização RL ultra-conservadora
     rl_optimization = {}
     if use_rl:
         # RL para petróleo deve ser MUITO conservador
         final_reward = 0.88 + random.uniform(0.08, 0.12)  # 88-100%
-        
+
         # Configurações otimizadas para segurança máxima
-        optimized_pickup = fault_current * random.uniform(0.6, 0.8)  # Pickup conservador
-        optimized_time = fault_time * random.uniform(0.7, 0.9)  # Tempo reduzido
-        
+        optimized_pickup = fault_current * \
+            random.uniform(0.6, 0.8)  # Pickup conservador
+        optimized_time = fault_time * \
+            random.uniform(0.7, 0.9)  # Tempo reduzido
+
         rl_optimization = {
             "episodes_trained": episodes,
             "convergence": True,
@@ -760,12 +781,14 @@ def simulate_fault_scenario(location: str, severity: float, use_rl: bool, episod
                 "safety_enhancement": "critical_level"
             }
         }
-    
+
     # Impacto MÍNIMO no sistema (objetivo para petróleo)
     affected_buses = 1 if use_rl else random.randint(1, 2)  # RL limita impacto
-    power_interrupted = severity * (3.0 if use_rl else 8.0)  # RL reduz drasticamente
-    restoration_time = (fault_time + random.uniform(0.5, 1.5)) if use_rl else (fault_time + random.uniform(2.0, 4.0))
-    
+    power_interrupted = severity * \
+        (3.0 if use_rl else 8.0)  # RL reduz drasticamente
+    restoration_time = (fault_time + random.uniform(0.5, 1.5)
+                        ) if use_rl else (fault_time + random.uniform(2.0, 4.0))
+
     return {
         "fault_analysis": {
             "location": location,
@@ -795,7 +818,7 @@ def simulate_load_change_scenario(location: str, severity: float, use_rl: bool, 
 
     load_change = severity * 50  # % de mudança
     new_current = 100 + (load_change * 5)  # A
-    
+
     # Tempo de resposta ULTRA-RÁPIDO para petróleo
     # Tempo de resposta para ajustes de proteção (MAIS REALISTA)
     if use_rl:
@@ -805,10 +828,10 @@ def simulate_load_change_scenario(location: str, severity: float, use_rl: bool, 
         adjustment_time = max(0.08, 0.15 - severity * 0.05)  # 80-150ms com RL
     else:
         adjustment_time = max(0.12, 0.25 - severity * 0.08)  # 120-250ms sem RL
-    
+
     # Dispositivos que atuam no cenário de mudança de carga
     device_actions = []
-    
+
     # Relé principal deve ajustar configurações
     primary_relay = {
         "id": f"relay_primary_{location}",
@@ -818,11 +841,11 @@ def simulate_load_change_scenario(location: str, severity: float, use_rl: bool, 
         "current": new_current
     }
     device_actions.append(primary_relay)
-    
+
     # Proteção de backup monitora
     backup_relay = {
         "id": f"relay_backup_{location}",
-        "type": "relay", 
+        "type": "relay",
         "action": "monitor",
         "time": adjustment_time + 0.05,
         "current": new_current
@@ -830,14 +853,20 @@ def simulate_load_change_scenario(location: str, severity: float, use_rl: bool, 
     device_actions.append(backup_relay)
 
     # Análise de falta potencial (sobrecarga pode causar falta)
-    potential_fault_current = new_current * 1.5 if abs(load_change) > 30 else new_current
+    potential_fault_current = new_current * \
+        1.5 if abs(load_change) > 30 else new_current
     clearance_time = adjustment_time
-    severity_level = "HIGH" if abs(load_change) > 40 else "MEDIUM" if abs(load_change) > 20 else "LOW"
-    
+    severity_level = "HIGH" if abs(load_change) > 40 else "MEDIUM" if abs(
+        load_change) > 20 else "LOW"
+
     # Coordenação de proteção para mudança de carga (mais realista)
-    primary_effectiveness = 0.90 + random.uniform(0.05, 0.08) if use_rl else 0.85 + random.uniform(0.05, 0.10)
-    backup_effectiveness = 0.88 + random.uniform(0.05, 0.07) if use_rl else 0.80 + random.uniform(0.05, 0.10)
-    
+    primary_effectiveness = 0.90 + \
+        random.uniform(0.05, 0.08) if use_rl else 0.85 + \
+        random.uniform(0.05, 0.10)
+    backup_effectiveness = 0.88 + \
+        random.uniform(0.05, 0.07) if use_rl else 0.80 + \
+        random.uniform(0.05, 0.10)
+
     coordination_results = {
         "primary_protection": {
             "activated": True,
@@ -866,7 +895,7 @@ def simulate_load_change_scenario(location: str, severity: float, use_rl: bool, 
     rl_optimization = {}
     if use_rl:
         final_reward = 0.75 + random.uniform(0.10, 0.20)  # 75-95%
-        
+
         rl_optimization = {
             "episodes_trained": episodes,
             "convergence": True,
@@ -884,12 +913,12 @@ def simulate_load_change_scenario(location: str, severity: float, use_rl: bool, 
                 "safety_enhancement": "improved"
             }
         }
-    
+
     # Impacto no sistema (mudança de carga pode afetar múltiplas áreas)
     affected_buses = 2 if abs(load_change) > 30 else 1
     power_interrupted = abs(load_change) * 0.1  # MW
     restoration_time = adjustment_time + random.uniform(0.5, 1.0)
-    
+
     if use_rl:
         affected_buses = max(1, affected_buses - 1)  # RL reduz impacto
         power_interrupted *= 0.6  # RL minimiza perda de potência
@@ -935,23 +964,27 @@ def simulate_equipment_failure_scenario(location: str, severity: float, use_rl: 
     import random
 
     # Tipo de falha baseado na severidade
-    failure_types = ["relay_malfunction", "breaker_stuck", "communication_loss", "sensor_drift"]
-    failure_type = failure_types[int(severity * len(failure_types))] if severity < 1.0 else failure_types[-1]
-    
+    failure_types = ["relay_malfunction", "breaker_stuck",
+                     "communication_loss", "sensor_drift"]
+    failure_type = failure_types[int(
+        severity * len(failure_types))] if severity < 1.0 else failure_types[-1]
+
     # Tempo de detecção e resposta (MAIS REALISTA)
     if use_rl:
         # RL processa diagnóstico de falha - tempo realista
         import time
         time.sleep(0.4)  # Simular processamento RL real (400ms)
         detection_time = random.uniform(0.08, 0.15)  # 80-150ms com RL
-        response_time = detection_time + random.uniform(0.05, 0.10)  # +50-100ms
+        response_time = detection_time + \
+            random.uniform(0.05, 0.10)  # +50-100ms
     else:
         detection_time = random.uniform(0.15, 0.30)  # 150-300ms sem RL
-        response_time = detection_time + random.uniform(0.10, 0.20)  # +100-200ms
-    
+        response_time = detection_time + \
+            random.uniform(0.10, 0.20)  # +100-200ms
+
     # Dispositivos que atuam no cenário de falha
     device_actions = []
-    
+
     # Sistema de backup deve ativar imediatamente
     backup_relay = {
         "id": f"relay_backup_{location}",
@@ -961,7 +994,7 @@ def simulate_equipment_failure_scenario(location: str, severity: float, use_rl: 
         "current": 150  # Corrente nominal de backup
     }
     device_actions.append(backup_relay)
-    
+
     # Disjuntor de isolamento
     isolation_breaker = {
         "id": f"breaker_isolation_{location}",
@@ -971,7 +1004,7 @@ def simulate_equipment_failure_scenario(location: str, severity: float, use_rl: 
         "current": 200
     }
     device_actions.append(isolation_breaker)
-    
+
     # Se falha crítica, ativar proteção de emergência
     if severity > 0.7:
         emergency_device = {
@@ -987,18 +1020,26 @@ def simulate_equipment_failure_scenario(location: str, severity: float, use_rl: 
     fault_current = 300 + (severity * 800)  # Corrente de falha simulada
     clearance_time = response_time
     severity_level = "CRITICAL" if severity > 0.8 else "HIGH" if severity > 0.5 else "MEDIUM"
-    
+
     # Coordenação de proteção melhorada para falhas
     if failure_type == "relay_malfunction":
         primary_effectiveness = 0.3 + random.uniform(0.1, 0.2)  # Relé falhando
-        backup_effectiveness = 0.92 + random.uniform(0.03, 0.06) if use_rl else 0.85 + random.uniform(0.05, 0.10)
+        backup_effectiveness = 0.92 + \
+            random.uniform(0.03, 0.06) if use_rl else 0.85 + \
+            random.uniform(0.05, 0.10)
     elif failure_type == "communication_loss":
-        primary_effectiveness = 0.70 + random.uniform(0.10, 0.15)  # Comunicação perdida mas funcional
-        backup_effectiveness = 0.90 + random.uniform(0.03, 0.07) if use_rl else 0.80 + random.uniform(0.05, 0.15)
+        # Comunicação perdida mas funcional
+        primary_effectiveness = 0.70 + random.uniform(0.10, 0.15)
+        backup_effectiveness = 0.90 + \
+            random.uniform(0.03, 0.07) if use_rl else 0.80 + \
+            random.uniform(0.05, 0.15)
     else:
-        primary_effectiveness = 0.50 + random.uniform(0.15, 0.25)  # Outras falhas
-        backup_effectiveness = 0.88 + random.uniform(0.05, 0.10) if use_rl else 0.75 + random.uniform(0.05, 0.15)
-    
+        primary_effectiveness = 0.50 + \
+            random.uniform(0.15, 0.25)  # Outras falhas
+        backup_effectiveness = 0.88 + \
+            random.uniform(0.05, 0.10) if use_rl else 0.75 + \
+            random.uniform(0.05, 0.15)
+
     coordination_results = {
         "primary_protection": {
             "activated": failure_type != "relay_malfunction",
@@ -1015,15 +1056,16 @@ def simulate_equipment_failure_scenario(location: str, severity: float, use_rl: 
     # Impacto no sistema baseado na severidade da falha
     system_impact_analysis = {
         "primary_protection": "LOST" if severity > 0.7 else "DEGRADED",
-        "backup_protection": "ACTIVATED" if severity > 0.5 else "MONITORING", 
+        "backup_protection": "ACTIVATED" if severity > 0.5 else "MONITORING",
         "zone_coverage": f"{max(0, 100 - severity * 50):.1f}%"
     }
-    
+
     # Impacto sistêmico otimizado (falhas controladas rapidamente)
     affected_buses = 2 if severity > 0.8 else 1  # RL sempre minimiza impacto
-    power_interrupted = severity * 6.0 if use_rl else severity * 8.0  # MW 
-    restoration_time = response_time + random.uniform(1.0, 2.5)  # Restauração mais rápida
-    
+    power_interrupted = severity * 6.0 if use_rl else severity * 8.0  # MW
+    restoration_time = response_time + \
+        random.uniform(1.0, 2.5)  # Restauração mais rápida
+
     if use_rl:
         affected_buses = 1  # RL sempre limita a 1 barra
         power_interrupted *= 0.6  # RL minimiza perda significativamente
@@ -1034,7 +1076,7 @@ def simulate_equipment_failure_scenario(location: str, severity: float, use_rl: 
     if failure_type == "relay_malfunction":
         mitigation_strategies.extend([
             "Switch to backup relay",
-            "Reduce pickup sensitivity temporarily", 
+            "Reduce pickup sensitivity temporarily",
             "Increase monitoring frequency"
         ])
     elif failure_type == "communication_loss":
@@ -1047,8 +1089,9 @@ def simulate_equipment_failure_scenario(location: str, severity: float, use_rl: 
     # Otimização RL para recuperação
     rl_optimization = {}
     if use_rl:
-        final_reward = 0.60 + random.uniform(0.15, 0.25)  # 60-85% (falhas são desafiadoras)
-        
+        # 60-85% (falhas são desafiadoras)
+        final_reward = 0.60 + random.uniform(0.15, 0.25)
+
         rl_optimization = {
             "episodes_trained": episodes,
             "convergence": True,
@@ -1115,27 +1158,30 @@ def simulate_equipment_failure_scenario(location: str, severity: float, use_rl: 
 
 def assess_scenario_compliance(scenario_results: dict, rl_enabled: bool) -> dict:
     """Avaliar conformidade normativa RIGOROSA para plataformas petrolíferas."""
-    
+
     compliance = {
         "overall_score": 0.0,
         "standards_met": [],
         "standards_evaluation": {},
         "safety_level": "CRITICAL_FAILURE"  # Assumir falha até provar o contrário
     }
-    
+
     # NORMA IEEE C37.112 - Coordenação de Proteção (AJUSTADA PARA FALHAS)
     if "coordination" in scenario_results:
         coordination = scenario_results["coordination"]
-        primary_effective = coordination.get("primary_protection", {}).get("effectiveness", 0)
-        backup_available = coordination.get("backup_protection", {}).get("activated", False)
-        backup_effective = coordination.get("backup_protection", {}).get("effectiveness", 0)
-        
+        primary_effective = coordination.get(
+            "primary_protection", {}).get("effectiveness", 0)
+        backup_available = coordination.get(
+            "backup_protection", {}).get("activated", False)
+        backup_effective = coordination.get(
+            "backup_protection", {}).get("effectiveness", 0)
+
         # Para cenários de falha: critérios mais flexíveis devido à natureza da falha
         if "failure_analysis" in scenario_results:
             # Em falhas de equipamento, proteção primária pode estar comprometida
             primary_acceptable = primary_effective > 0.70  # Reduzido de 0.95 para 0.70
             backup_excellent = backup_available and backup_effective > 0.85  # Backup deve ser bom
-            
+
             # Score ajustado para falhas de equipamento
             if backup_excellent and primary_acceptable:
                 ieee_score = 0.90  # Bom considerando a falha
@@ -1144,43 +1190,46 @@ def assess_scenario_compliance(scenario_results: dict, rl_enabled: bool) -> dict
             elif primary_acceptable and backup_available:
                 ieee_score = 0.75  # Razoável
             else:
-                ieee_score = max(0.2, (primary_effective + backup_effective) / 2)
+                ieee_score = max(
+                    0.2, (primary_effective + backup_effective) / 2)
         else:
             # Para outros cenários: critérios normais
             primary_excellent = primary_effective > 0.95
             backup_excellent = backup_available and backup_effective > 0.90
-            
+
             if primary_excellent and backup_excellent:
                 ieee_score = 0.98  # Excelente
             elif primary_effective > 0.85 and backup_available:
                 ieee_score = 0.85  # Bom
             else:
                 ieee_score = max(0.1, primary_effective * 0.7)
-        
-        # Bonus mínimo por RL 
+
+        # Bonus mínimo por RL
         if rl_enabled and ieee_score > 0.75:
             ieee_score = min(1.0, ieee_score + 0.05)
-            
+
         compliance["standards_evaluation"]["IEEE_C37_112"] = {
             "score": ieee_score,
             "compliant": ieee_score > 0.75,  # Critério ajustado para falhas
             "details": f"Primária: {primary_effective:.1%}, Backup: {backup_effective:.1%} (critério ajustado para falhas)",
             "criticality": "ALTA" if ieee_score < 0.70 else "MÉDIA" if ieee_score < 0.80 else "BAIXA"
         }
-    
+
     # NORMA IEC 61850 - Comunicação (TEMPO CRÍTICO MAS REALISTA)
     if "device_actions" in scenario_results:
         device_count = len(scenario_results["device_actions"])
-        response_times = [action.get("time", 1.0) for action in scenario_results["device_actions"]]
-        avg_response = sum(response_times) / len(response_times) if response_times else 1.0
+        response_times = [action.get("time", 1.0)
+                          for action in scenario_results["device_actions"]]
+        avg_response = sum(response_times) / \
+            len(response_times) if response_times else 1.0
         max_response = max(response_times) if response_times else 1.0
-        
+
         # Para petróleo: CRITÉRIOS MAIS REALISTAS
         # Tempo médio < 200ms (era 100ms - muito rigoroso), máximo < 300ms (era 150ms)
         excellent_communication = avg_response < 0.2 and max_response < 0.3
         good_communication = avg_response < 0.3 and max_response < 0.4
         acceptable_communication = avg_response < 0.5 and max_response < 0.6
-        
+
         if excellent_communication:
             iec_score = 0.95
         elif good_communication:
@@ -1188,45 +1237,55 @@ def assess_scenario_compliance(scenario_results: dict, rl_enabled: bool) -> dict
         elif acceptable_communication:
             iec_score = 0.75
         else:
-            iec_score = max(0.1, 1.0 - (avg_response / 0.2))  # Penalização moderada
-        
+            # Penalização moderada
+            iec_score = max(0.1, 1.0 - (avg_response / 0.2))
+
         # Verificar quantidade de dispositivos comunicando
         if device_count >= 3:
-            iec_score = min(1.0, iec_score + 0.05)  # Bonus por múltiplos dispositivos
+            # Bonus por múltiplos dispositivos
+            iec_score = min(1.0, iec_score + 0.05)
         elif device_count < 2:
             iec_score *= 0.8  # Penalização moderada por poucos dispositivos
-            
+
         compliance["standards_evaluation"]["IEC_61850"] = {
             "score": iec_score,
             "compliant": iec_score > 0.75,  # Critério mais realista (era 0.85)
             "details": f"Dispositivos: {device_count}, Tempo médio: {avg_response*1000:.0f}ms (<200ms req.), Máximo: {max_response*1000:.0f}ms",
             "criticality": "ALTA" if avg_response > 0.3 else "MÉDIA" if avg_response > 0.2 else "BAIXA"
         }
-    
+
     # NORMA NBR 5410 - Segurança de Instalações (AJUSTADA PARA TIPO DE CENÁRIO)
     if "system_impact" in scenario_results:
         impact = scenario_results["system_impact"]
         affected_buses = impact.get("affected_buses", 10)
-        restoration_time = float(impact.get("restoration_time", "10.0").replace("s", ""))
-        power_interrupted = float(impact.get("power_interrupted", "10.0").replace("MW", ""))
-        
+        restoration_time = float(impact.get(
+            "restoration_time", "10.0").replace("s", ""))
+        power_interrupted = float(impact.get(
+            "power_interrupted", "10.0").replace("MW", ""))
+
         # Critérios ajustados baseados no tipo de cenário
         is_equipment_failure = "failure_analysis" in scenario_results
         is_load_change = "load_analysis" in scenario_results
-        
+
         if is_equipment_failure:
             # Falhas de equipamento: critérios mais flexíveis (equipamento já falhou)
-            excellent_containment = (affected_buses <= 2 and restoration_time <= 3.0 and power_interrupted <= 6.0)
-            acceptable_containment = (affected_buses <= 3 and restoration_time <= 5.0 and power_interrupted <= 8.0)
+            excellent_containment = (
+                affected_buses <= 2 and restoration_time <= 3.0 and power_interrupted <= 6.0)
+            acceptable_containment = (
+                affected_buses <= 3 and restoration_time <= 5.0 and power_interrupted <= 8.0)
         elif is_load_change:
             # Mudança de carga: critérios normais (operação controlada)
-            excellent_containment = (affected_buses <= 2 and restoration_time <= 2.0 and power_interrupted <= 3.0)
-            acceptable_containment = (affected_buses <= 3 and restoration_time <= 3.0 and power_interrupted <= 5.0)
+            excellent_containment = (
+                affected_buses <= 2 and restoration_time <= 2.0 and power_interrupted <= 3.0)
+            acceptable_containment = (
+                affected_buses <= 3 and restoration_time <= 3.0 and power_interrupted <= 5.0)
         else:
             # Faltas: critérios rigorosos (emergência)
-            excellent_containment = (affected_buses <= 1 and restoration_time <= 1.5 and power_interrupted <= 2.0)
-            acceptable_containment = (affected_buses <= 2 and restoration_time <= 2.5 and power_interrupted <= 4.0)
-        
+            excellent_containment = (
+                affected_buses <= 1 and restoration_time <= 1.5 and power_interrupted <= 2.0)
+            acceptable_containment = (
+                affected_buses <= 2 and restoration_time <= 2.5 and power_interrupted <= 4.0)
+
         if excellent_containment:
             nbr_score = 0.95
         elif acceptable_containment:
@@ -1234,37 +1293,39 @@ def assess_scenario_compliance(scenario_results: dict, rl_enabled: bool) -> dict
         else:
             # Penalização mais moderada para falhas de equipamento
             if is_equipment_failure:
-                nbr_score = max(0.1, 0.6 - (affected_buses - 2) * 0.05 - (restoration_time - 3.0) * 0.02)
+                nbr_score = max(0.1, 0.6 - (affected_buses - 2)
+                                * 0.05 - (restoration_time - 3.0) * 0.02)
             else:
-                nbr_score = max(0.0, 0.5 - (affected_buses - 2) * 0.1 - (restoration_time - 2.0) * 0.05)
-        
+                nbr_score = max(0.0, 0.5 - (affected_buses - 2)
+                                * 0.1 - (restoration_time - 2.0) * 0.05)
+
         # Bonus significativo por RL apenas se já for bom
         if rl_enabled and (excellent_containment or acceptable_containment):
             nbr_score = min(1.0, nbr_score + 0.05)
-            
+
         # Detalhes ajustados por tipo de cenário
         scenario_type = "Falha de Equipamento" if is_equipment_failure else "Mudança de Carga" if is_load_change else "Falta"
         max_buses = 2 if is_equipment_failure else 2 if is_load_change else 1
         max_time = 3.0 if is_equipment_failure else 2.0 if is_load_change else 1.5
         max_power = 6.0 if is_equipment_failure else 3.0 if is_load_change else 2.0
-            
+
         compliance["standards_evaluation"]["NBR_5410"] = {
             "score": nbr_score,
             "compliant": nbr_score > 0.75,  # Critério ajustado
             "details": f"Barras: {affected_buses} (≤{max_buses} req.), Restauração: {restoration_time:.1f}s (≤{max_time}s req.), Potência: {power_interrupted:.1f}MW (≤{max_power}MW req.) - {scenario_type}",
             "criticality": "CRÍTICA" if affected_buses > max_buses + 1 or restoration_time > max_time + 2 else "BAIXA"
         }
-    
+
     # NORMA API RP 14C - Segurança Petrolífera (AJUSTADA PARA CENÁRIOS)
     if "fault_analysis" in scenario_results:
         fault = scenario_results["fault_analysis"]
         clearance_time = fault.get("clearance_time", 1.0)
         severity = fault.get("severity_level", "HIGH")
         current = fault.get("current", 0)
-        
+
         # Critérios ajustados baseados no tipo de cenário
         is_equipment_failure = "failure_analysis" in scenario_results
-        
+
         # Para falhas de equipamento: critérios mais flexíveis (tempo de diagnóstico + recuperação)
         if is_equipment_failure:
             if severity == "LOW":
@@ -1293,7 +1354,7 @@ def assess_scenario_compliance(scenario_results: dict, rl_enabled: bool) -> dict
                 excellent_time = clearance_time < 0.10
                 good_time = clearance_time < 0.15
                 acceptable_time = clearance_time < 0.20
-        
+
         if excellent_time:
             api_score = 0.95
         elif good_time:
@@ -1306,53 +1367,54 @@ def assess_scenario_compliance(scenario_results: dict, rl_enabled: bool) -> dict
                 api_score = max(0.2, 0.6 - (clearance_time - 0.20) * 1.5)
             else:
                 api_score = max(0.1, 0.5 - (clearance_time - 0.15) * 2.0)
-        
+
         # Verificar corrente - proteção deve atuar com margem de segurança
         if current > 8000:  # Corrente muito alta é perigosa
             api_score *= 0.9
         elif current > 5000:
             api_score *= 0.95
-        
+
         # Bonus por RL apenas se já bom
         if rl_enabled and (excellent_time or good_time):
             api_score = min(1.0, api_score + 0.03)
-            
+
         # Detalhes ajustados por cenário
-        req_time = 200 if is_equipment_failure and severity=='LOW' else 180 if is_equipment_failure and severity=='MEDIUM' else 150 if is_equipment_failure else 150 if severity=='LOW' else 120 if severity=='MEDIUM' else 100
+        req_time = 200 if is_equipment_failure and severity == 'LOW' else 180 if is_equipment_failure and severity == 'MEDIUM' else 150 if is_equipment_failure else 150 if severity == 'LOW' else 120 if severity == 'MEDIUM' else 100
         scenario_note = " (Falha de Equipamento)" if is_equipment_failure else ""
-        
+
         compliance["standards_evaluation"]["API_RP_14C"] = {
             "score": api_score,
             "compliant": api_score > 0.70,  # Critério mais flexível para falhas
             "details": f"Tempo: {clearance_time*1000:.0f}ms (req.: {req_time}ms), Severidade: {severity}{scenario_note}",
             "criticality": "CRÍTICA" if not acceptable_time else "MÉDIA" if not good_time else "BAIXA"
         }
-    
+
     # Calcular score geral e determinar nível de segurança
-    scores = [std["score"] for std in compliance["standards_evaluation"].values()]
+    scores = [std["score"]
+              for std in compliance["standards_evaluation"].values()]
     compliance["overall_score"] = sum(scores) / len(scores) if scores else 0.0
-    
+
     # Padrões que DEVEM ser atendidos
     compliance["standards_met"] = [
-        std_name for std_name, std_data in compliance["standards_evaluation"].items() 
+        std_name for std_name, std_data in compliance["standards_evaluation"].items()
         if std_data["compliant"]
     ]
-    
+
     # Determinar nível de segurança para petróleo (MAIS EQUILIBRADO)
     critical_failures = [
-        std_name for std_name, std_data in compliance["standards_evaluation"].items() 
+        std_name for std_name, std_data in compliance["standards_evaluation"].items()
         if std_data.get("criticality") in ["CRÍTICA"] and not std_data["compliant"]
     ]
-    
+
     high_risk_failures = [
-        std_name for std_name, std_data in compliance["standards_evaluation"].items() 
+        std_name for std_name, std_data in compliance["standards_evaluation"].items()
         if std_data.get("criticality") in ["ALTA", "MÉDIA"] and not std_data["compliant"]
     ]
-    
+
     if len(critical_failures) == 0 and compliance["overall_score"] > 0.90:
         compliance["safety_level"] = "EXCELLENT"
     elif len(critical_failures) == 0 and compliance["overall_score"] > 0.85:
-        compliance["safety_level"] = "VERY_GOOD" 
+        compliance["safety_level"] = "VERY_GOOD"
     elif len(critical_failures) == 0 and compliance["overall_score"] > 0.75:
         compliance["safety_level"] = "GOOD"
     elif len(critical_failures) <= 1 and len(high_risk_failures) <= 2 and compliance["overall_score"] > 0.70:
@@ -1361,13 +1423,13 @@ def assess_scenario_compliance(scenario_results: dict, rl_enabled: bool) -> dict
         compliance["safety_level"] = "MARGINAL"
     else:
         compliance["safety_level"] = "CRITICAL_FAILURE"
-    
+
     # Avaliação do RL com critérios rigorosos
     if rl_enabled:
         rl_effectiveness = "EXCELENTE" if compliance["overall_score"] > 0.90 else \
-                          "BOM" if compliance["overall_score"] > 0.80 else \
-                          "INSUFICIENTE"
-        
+            "BOM" if compliance["overall_score"] > 0.80 else \
+            "INSUFICIENTE"
+
         compliance["rl_impact"] = {
             "enabled": True,
             "standards_improved": len(compliance["standards_met"]),
@@ -1380,7 +1442,7 @@ def assess_scenario_compliance(scenario_results: dict, rl_enabled: bool) -> dict
             "enabled": False,
             "recommendation": "CRÍTICO: RL deve ser habilitado para sistemas petrolíferos"
         }
-    
+
     return compliance
 
 

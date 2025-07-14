@@ -626,34 +626,38 @@ async def run_protection_scenario(scenario: ProtectionScenario):
     """Executar cenário avançado de coordenação de proteção com RL."""
     try:
         scenario_id = str(uuid.uuid4())[:8]
-        
+
         # Carregar dados de rede e proteção
         network_data = load_network_data()
         protection_data = network_data.get("protection_devices", {})
-        
+
         # Simular falha no sistema
         fault_analysis = simulate_detailed_fault(scenario, network_data)
-        
+
         # Determinar sequência de atuação de proteção
         if scenario.rl_optimization:
             protection_sequence = await optimize_protection_with_rl(scenario, fault_analysis)
         else:
-            protection_sequence = simulate_conventional_protection(scenario, fault_analysis)
-        
+            protection_sequence = simulate_conventional_protection(
+                scenario, fault_analysis)
+
         # Calcular métricas de coordenação
-        coordination_metrics = calculate_coordination_metrics(protection_sequence, scenario)
-        
+        coordination_metrics = calculate_coordination_metrics(
+            protection_sequence, scenario)
+
         # Avaliar conformidade normativa
-        compliance_check = evaluate_protection_compliance(protection_sequence, scenario)
-        
+        compliance_check = evaluate_protection_compliance(
+            protection_sequence, scenario)
+
         # Simular impacto no sistema
-        system_impact = simulate_system_impact(fault_analysis, protection_sequence)
-        
+        system_impact = simulate_system_impact(
+            fault_analysis, protection_sequence)
+
         # Gerar recomendações de melhoria
         recommendations = generate_protection_recommendations(
             coordination_metrics, compliance_check, scenario
         )
-        
+
         return {
             "scenario_id": scenario_id,
             "scenario_name": scenario.scenario_name,
@@ -668,10 +672,10 @@ async def run_protection_scenario(scenario: ProtectionScenario):
             "execution_time": datetime.now().isoformat(),
             "performance_score": coordination_metrics.get("overall_score", 0)
         }
-        
+
     except Exception as e:
         raise HTTPException(
-            status_code=500, 
+            status_code=500,
             detail=f"Erro na simulação de proteção: {str(e)}"
         )
 
@@ -680,26 +684,29 @@ def simulate_detailed_fault(scenario: ProtectionScenario, network_data: Dict) ->
     """Simula análise detalhada de falta no sistema."""
     import random
     import math
-    
+
     # Calcular corrente de falta baseada em impedância e localização
     base_current = 1000  # Corrente base em A
-    fault_factor = 1 / (scenario.fault_impedance + 0.01)  # Evitar divisão por zero
-    
+    fault_factor = 1 / (scenario.fault_impedance +
+                        0.01)  # Evitar divisão por zero
+
     fault_current = base_current * fault_factor * scenario.system_loading
-    
+
     # Simular propagação da falta
-    affected_zones = simulate_fault_propagation(scenario.fault_location, network_data)
-    
+    affected_zones = simulate_fault_propagation(
+        scenario.fault_location, network_data)
+
     # Calcular tensões nas barras durante a falta
     bus_voltages = {}
     for bus_id in range(7):  # 7 barras no sistema
         distance_factor = abs(bus_id - scenario.fault_location) + 1
         voltage_drop = 0.95 - (0.1 / distance_factor)  # Queda de tensão
         bus_voltages[f"bus_{bus_id}"] = max(0.1, voltage_drop)
-    
+
     return {
         "fault_current_rms": round(fault_current, 2),
-        "fault_power_mva": round(fault_current * 13.8 / 1000, 2),  # Base 13.8kV
+        # Base 13.8kV
+        "fault_power_mva": round(fault_current * 13.8 / 1000, 2),
         "affected_zones": affected_zones,
         "bus_voltages_pu": bus_voltages,
         "fault_angle": random.uniform(-30, 30),  # Ângulo da falta
@@ -712,18 +719,18 @@ def simulate_detailed_fault(scenario: ProtectionScenario, network_data: Dict) ->
 def simulate_fault_propagation(fault_location: int, network_data: Dict) -> List[str]:
     """Simula propagação da falta através do sistema."""
     zones = []
-    
+
     # Zona primária (local da falta)
     zones.append(f"zone_primary_bus_{fault_location}")
-    
+
     # Zonas adjacentes (baseado na topologia)
     adjacent_buses = get_adjacent_buses(fault_location, network_data)
     for bus in adjacent_buses:
         zones.append(f"zone_backup_bus_{bus}")
-    
+
     # Zona remota (proteção de retaguarda)
     zones.append("zone_remote_system")
-    
+
     return zones
 
 
@@ -744,10 +751,10 @@ def get_adjacent_buses(bus_id: int, network_data: Dict) -> List[int]:
 
 async def optimize_protection_with_rl(scenario: ProtectionScenario, fault_analysis: Dict) -> List[ProtectionAction]:
     """Otimiza coordenação de proteção usando Reinforcement Learning."""
-    
+
     # Simular processo de otimização RL
     await asyncio.sleep(1)  # Simular tempo de processamento
-    
+
     # Estado do sistema para o agente RL
     rl_state = {
         "fault_current": fault_analysis["fault_current_rms"],
@@ -755,10 +762,10 @@ async def optimize_protection_with_rl(scenario: ProtectionScenario, fault_analys
         "fault_location": scenario.fault_location,
         "bus_voltages": fault_analysis["bus_voltages_pu"]
     }
-    
+
     # Simular decisões do agente RL otimizadas
     protection_actions = []
-    
+
     # Proteção primária otimizada por RL
     primary_action = ProtectionAction(
         device_id=f"rele_51_l{scenario.fault_location}",
@@ -768,7 +775,7 @@ async def optimize_protection_with_rl(scenario: ProtectionScenario, fault_analys
         impact_score=0.95
     )
     protection_actions.append(primary_action)
-    
+
     # Proteção de retaguarda com coordenação melhorada
     backup_action = ProtectionAction(
         device_id=f"rele_67_b{scenario.fault_location}",
@@ -778,7 +785,7 @@ async def optimize_protection_with_rl(scenario: ProtectionScenario, fault_analys
         impact_score=0.85
     )
     protection_actions.append(backup_action)
-    
+
     # Ação de religamento automático otimizada
     reclose_action = ProtectionAction(
         device_id=f"disj_l{scenario.fault_location}",
@@ -788,15 +795,15 @@ async def optimize_protection_with_rl(scenario: ProtectionScenario, fault_analys
         impact_score=0.90
     )
     protection_actions.append(reclose_action)
-    
+
     return protection_actions
 
 
 def simulate_conventional_protection(scenario: ProtectionScenario, fault_analysis: Dict) -> List[ProtectionAction]:
     """Simula coordenação convencional de proteção."""
-    
+
     protection_actions = []
-    
+
     # Proteção primária convencional
     primary_action = ProtectionAction(
         device_id=f"rele_51_l{scenario.fault_location}",
@@ -806,47 +813,48 @@ def simulate_conventional_protection(scenario: ProtectionScenario, fault_analysi
         impact_score=0.85
     )
     protection_actions.append(primary_action)
-    
+
     # Proteção de retaguarda convencional
     backup_action = ProtectionAction(
         device_id=f"rele_67_b{scenario.fault_location}",
         action_time=0.50,  # Menos coordenado
-        action_type="trip", 
+        action_type="trip",
         success_probability=0.90,
         impact_score=0.75
     )
     protection_actions.append(backup_action)
-    
+
     return protection_actions
 
 
 def calculate_coordination_metrics(actions: List[ProtectionAction], scenario: ProtectionScenario) -> Dict:
     """Calcula métricas de coordenação de proteção."""
-    
+
     # Tempo total de eliminação da falta
-    primary_time = min(action.action_time for action in actions if action.action_type == "trip")
-    
+    primary_time = min(
+        action.action_time for action in actions if action.action_type == "trip")
+
     # Índice de seletividade
     trip_actions = [a for a in actions if a.action_type == "trip"]
     selectivity = 1.0 if len(trip_actions) <= 2 else 0.8
-    
+
     # Índice de coordenação temporal
     if len(trip_actions) >= 2:
         time_margin = trip_actions[1].action_time - trip_actions[0].action_time
         coordination_index = min(1.0, time_margin / 0.3)  # Margem mínima 300ms
     else:
         coordination_index = 1.0
-    
+
     # Confiabilidade do sistema
     reliability = sum(a.success_probability for a in actions) / len(actions)
-    
+
     # Score geral
     overall_score = (
         selectivity * scenario.coordination_objectives["maximize_selectivity"] +
         (1.0 - primary_time) * scenario.coordination_objectives["minimize_trip_time"] +
         reliability * 0.3
     )
-    
+
     return {
         "primary_clearing_time": round(primary_time, 3),
         "selectivity_index": round(selectivity, 3),
@@ -860,9 +868,9 @@ def calculate_coordination_metrics(actions: List[ProtectionAction], scenario: Pr
 
 def evaluate_protection_compliance(actions: List[ProtectionAction], scenario: ProtectionScenario) -> Dict:
     """Avalia conformidade com normas técnicas."""
-    
+
     compliance_results = {}
-    
+
     # IEEE C37.112 - Coordenação de proteção
     trip_actions = [a for a in actions if a.action_type == "trip"]
     if len(trip_actions) >= 2:
@@ -870,39 +878,41 @@ def evaluate_protection_compliance(actions: List[ProtectionAction], scenario: Pr
         ieee_compliant = time_margin >= 0.2  # Mínimo 200ms
     else:
         ieee_compliant = True
-    
+
     compliance_results["IEEE_C37_112"] = {
         "compliant": ieee_compliant,
         "time_margin_ms": round((time_margin if len(trip_actions) >= 2 else 0) * 1000),
         "requirement": "Margem mínima de 200ms entre proteções"
     }
-    
+
     # NBR 5410 - Instalações elétricas
-    primary_time = min(a.action_time for a in trip_actions) if trip_actions else 1.0
+    primary_time = min(
+        a.action_time for a in trip_actions) if trip_actions else 1.0
     nbr_compliant = primary_time <= 0.4  # Máximo 400ms
-    
+
     compliance_results["NBR_5410"] = {
         "compliant": nbr_compliant,
         "clearing_time_ms": round(primary_time * 1000),
         "requirement": "Eliminação de falta em no máximo 400ms"
     }
-    
+
     # API RP 14C - Sistemas petrolíferos
     # Verificar religamento automático e backup
     has_reclose = any(a.action_type == "reclose" for a in actions)
     has_backup = len([a for a in actions if a.action_type == "trip"]) >= 2
     api_compliant = has_reclose and has_backup
-    
+
     compliance_results["API_RP_14C"] = {
         "compliant": api_compliant,
         "has_automatic_reclose": has_reclose,
         "has_backup_protection": has_backup,
         "requirement": "Religamento automático e proteção redundante"
     }
-    
+
     # Conformidade geral
-    overall_compliant = all(result["compliant"] for result in compliance_results.values())
-    
+    overall_compliant = all(result["compliant"]
+                            for result in compliance_results.values())
+
     return {
         "overall_compliant": overall_compliant,
         "standards": compliance_results,
@@ -912,28 +922,30 @@ def evaluate_protection_compliance(actions: List[ProtectionAction], scenario: Pr
 
 def simulate_system_impact(fault_analysis: Dict, actions: List[ProtectionAction]) -> Dict:
     """Simula impacto da falta e ações de proteção no sistema."""
-    
+
     # Calcular carga interrompida
-    interrupted_load_mw = fault_analysis["fault_power_mva"] * 0.8  # 80% da potência de falta
-    
+    # 80% da potência de falta
+    interrupted_load_mw = fault_analysis["fault_power_mva"] * 0.8
+
     # Duração da interrupção
     trip_time = min(a.action_time for a in actions if a.action_type == "trip")
     reclose_actions = [a for a in actions if a.action_type == "reclose"]
-    
+
     if reclose_actions and reclose_actions[0].success_probability > 0.7:
         interruption_duration = reclose_actions[0].action_time
         successful_restoration = True
     else:
         interruption_duration = 30.0  # Reparo manual
         successful_restoration = False
-    
+
     # Energia não suprida
     energy_not_served = interrupted_load_mw * interruption_duration / 60  # MWh
-    
+
     # Índices de confiabilidade
     saidi = interruption_duration / 60  # System Average Interruption Duration Index
-    saifi = 1.0 if interruption_duration > 0 else 0.0  # System Average Interruption Frequency Index
-    
+    # System Average Interruption Frequency Index
+    saifi = 1.0 if interruption_duration > 0 else 0.0
+
     return {
         "interrupted_load_mw": round(interrupted_load_mw, 2),
         "interruption_duration_min": round(interruption_duration / 60, 2),
@@ -948,9 +960,9 @@ def simulate_system_impact(fault_analysis: Dict, actions: List[ProtectionAction]
 
 def generate_protection_recommendations(metrics: Dict, compliance: Dict, scenario: ProtectionScenario) -> List[Dict]:
     """Gera recomendações para melhoria da coordenação."""
-    
+
     recommendations = []
-    
+
     # Recomendações baseadas em coordenação
     if metrics["coordination_index"] < 0.8:
         recommendations.append({
@@ -960,17 +972,17 @@ def generate_protection_recommendations(metrics: Dict, compliance: Dict, scenari
             "action": f"Aumentar tempo da proteção de retaguarda para {metrics['primary_clearing_time'] + 0.3:.3f}s",
             "expected_improvement": "Melhoria de 15% na seletividade"
         })
-    
+
     # Recomendações baseadas em conformidade
     if not compliance["standards"]["IEEE_C37_112"]["compliant"]:
         recommendations.append({
             "type": "compliance",
-            "priority": "high", 
+            "priority": "high",
             "description": "Adequar margem temporal conforme IEEE C37.112",
             "action": "Aumentar margem entre proteções para no mínimo 200ms",
             "expected_improvement": "Conformidade total com IEEE C37.112"
         })
-    
+
     # Recomendações de otimização RL
     if not scenario.rl_optimization:
         recommendations.append({
@@ -980,7 +992,7 @@ def generate_protection_recommendations(metrics: Dict, compliance: Dict, scenari
             "action": "Ativar algoritmo RL para otimização automática de parâmetros",
             "expected_improvement": "Melhoria de 20-30% no tempo de coordenação"
         })
-    
+
     # Recomendações de confiabilidade
     if metrics["system_reliability"] < 0.95:
         recommendations.append({
@@ -990,5 +1002,5 @@ def generate_protection_recommendations(metrics: Dict, compliance: Dict, scenari
             "action": "Implementar manutenção preditiva e redundância",
             "expected_improvement": "Aumento da confiabilidade para 98%"
         })
-    
+
     return recommendations

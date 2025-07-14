@@ -55,7 +55,8 @@ class LoadConfig(BaseModel):
 
 # Caminho padrão para a rede
 # Vai para o diretório raiz do projeto
-BASE_DIR = Path(__file__).parent.parent.parent.parent.parent  # Cinco níveis acima: routers -> api -> backend -> src -> protecai_mini
+# Cinco níveis acima: routers -> api -> backend -> src -> protecai_mini
+BASE_DIR = Path(__file__).parent.parent.parent.parent.parent
 DEFAULT_NETWORK_PATH = BASE_DIR / "simuladores/power_sim/data/ieee14_protecao.json"
 
 
