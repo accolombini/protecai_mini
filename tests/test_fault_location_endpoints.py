@@ -213,7 +213,7 @@ class TestFaultLocationRealtime:
         }
 
         response = await async_client.post(
-            "/api/v1/fault-location/realtime/start",
+            "/api/v1/fault-location/realtime-tracking/session/start",
             json=config
         )
 
@@ -231,7 +231,7 @@ class TestFaultLocationRealtime:
         session_id = "test_session_001"
 
         response = await async_client.get(
-            f"/api/v1/fault-location/realtime/status/{session_id}"
+            f"/api/v1/fault-location/realtime-tracking/session/{session_id}/status"
         )
 
         assert response.status_code == 200
@@ -249,7 +249,7 @@ class TestFaultLocationRealtime:
         session_id = "test_session_001"
 
         response = await async_client.post(
-            f"/api/v1/fault-location/realtime/stop/{session_id}"
+            f"/api/v1/fault-location/realtime-tracking/session/{session_id}/stop"
         )
 
         assert response.status_code == 200
