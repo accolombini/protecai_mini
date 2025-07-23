@@ -603,10 +603,17 @@ async def get_audit_trail(
         # Simular trilha de auditoria
         audit_entries = []
 
+        # Gerar datas recentes dentro do período padrão
+        now = datetime.now()
+        recent_date_1 = now - timedelta(days=1)
+        recent_date_2 = now - timedelta(days=3)
+        recent_date_3 = now - timedelta(days=7)
+        recent_date_4 = now - timedelta(days=14)
+
         # Entrada 1: Alteração de configuração RL
         audit_entries.append(AuditTrail(
             action_id="audit_001",
-            timestamp=datetime(2025, 1, 7, 10, 15, 30),
+            timestamp=recent_date_1,
             user="RL_Agent_System",
             action_type="configuration_change",
             target_object="relay_settings_zone_3",
@@ -631,7 +638,7 @@ async def get_audit_trail(
         # Entrada 2: Ação manual do operador
         audit_entries.append(AuditTrail(
             action_id="audit_002",
-            timestamp=datetime(2025, 1, 6, 16, 45, 0),
+            timestamp=recent_date_2,
             user="operator_silva",
             action_type="manual_override",
             target_object="protection_zone_8",
@@ -640,7 +647,7 @@ async def get_audit_trail(
             change_reason="Maintenance work on transmission line",
             approval_required=True,
             approved_by="supervisor_santos",
-            approval_date=datetime(2025, 1, 6, 17, 0, 0),
+            approval_date=recent_date_2 + timedelta(minutes=15),
             compliance_impact="medium",
             validation_status="approved"
         ))
@@ -648,7 +655,7 @@ async def get_audit_trail(
         # Entrada 3: Validação automática
         audit_entries.append(AuditTrail(
             action_id="audit_003",
-            timestamp=datetime(2025, 1, 6, 6, 0, 0),
+            timestamp=recent_date_3,
             user="AI_Validation_Engine",
             action_type="automatic_validation",
             target_object="coordination_study_results",
@@ -669,13 +676,13 @@ async def get_audit_trail(
         # Entrada 4: Backup de configurações
         audit_entries.append(AuditTrail(
             action_id="audit_004",
-            timestamp=datetime(2025, 1, 5, 23, 30, 0),
+            timestamp=recent_date_4,
             user="backup_system",
             action_type="configuration_backup",
             target_object="all_relay_settings",
             before_state=None,
             after_state={
-                "backup_id": "backup_20250105_2330",
+                "backup_id": f"backup_{recent_date_4.strftime('%Y%m%d_%H%M')}",
                 "files_backed_up": 47,
                 "backup_size_mb": 2.8
             },
