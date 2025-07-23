@@ -18,17 +18,17 @@ class ProtecaoEletrica:
     Classe principal do sistema de proteção elétrica para petróleo.
     Implementa lógica de proteção, análise de faltas e coordenação.
     """
-    
+
     def __init__(self):
         """Inicializar sistema de proteção"""
         self.versao = "1.0.0"
         self.sistema_inicializado = False
         self.parametros = self._carregar_parametros_default()
         self.dados_protecao = {}
-        
+
         logger.info("🛢️ ProtecAI Mini inicializado")
         self.sistema_inicializado = True
-        
+
     def _carregar_parametros_default(self) -> Dict:
         """Carregar parâmetros padrão do sistema"""
         return {
@@ -39,21 +39,21 @@ class ProtecaoEletrica:
             "tempo_operacao_max": 100,  # ms
             "tolerancia_coordenacao": 0.2  # s
         }
-    
+
     def calcular_protecao(self, dados_entrada: Optional[Dict] = None) -> Dict:
         """
         Calcular proteção para o sistema elétrico
-        
+
         Args:
             dados_entrada: Dados do sistema elétrico (opcional)
-            
+
         Returns:
             Resultado do cálculo de proteção
         """
         try:
             if not self.sistema_inicializado:
                 raise Exception("Sistema não inicializado")
-            
+
             # Simular cálculo de proteção
             resultado = {
                 "status": "success",
@@ -73,15 +73,15 @@ class ProtecaoEletrica:
                     "Tempo de operação otimizado"
                 ]
             }
-            
+
             self.dados_protecao = resultado
-            
+
             logger.info("✅ Cálculo de proteção realizado com sucesso")
             logger.info(f"🎯 Selectividade: {resultado['selectividade']}%")
             logger.info(f"⚡ Tempo operação: {resultado['tempo_operacao']}ms")
-            
+
             return resultado
-            
+
         except Exception as e:
             logger.error(f"❌ Erro no cálculo de proteção: {e}")
             return {
@@ -91,14 +91,14 @@ class ProtecaoEletrica:
                 "tempo_operacao": 0,
                 "compliance": 0
             }
-    
+
     def analisar_falta(self, tipo_falta: str = "trifasica") -> Dict:
         """
         Analisar falta no sistema
-        
+
         Args:
             tipo_falta: Tipo de falta a analisar
-            
+
         Returns:
             Análise da falta
         """
@@ -112,18 +112,18 @@ class ProtecaoEletrica:
                 "acao_recomendada": "Isolamento imediato",
                 "tempo_estimado": 150  # ms
             }
-            
+
             logger.info(f"🔍 Análise de falta {tipo_falta} concluída")
             return resultado
-            
+
         except Exception as e:
             logger.error(f"❌ Erro na análise de falta: {e}")
             return {"status": "error", "message": str(e)}
-    
+
     def verificar_coordenacao(self) -> Dict:
         """
         Verificar coordenação entre dispositivos de proteção
-        
+
         Returns:
             Status da coordenação
         """
@@ -138,18 +138,18 @@ class ProtecaoEletrica:
                     "Margem de tempo dentro do padrão IEEE"
                 ]
             }
-            
+
             logger.info("✅ Verificação de coordenação concluída")
             return resultado
-            
+
         except Exception as e:
             logger.error(f"❌ Erro na verificação de coordenação: {e}")
             return {"status": "error", "message": str(e)}
-    
+
     def get_status_sistema(self) -> Dict:
         """
         Obter status atual do sistema
-        
+
         Returns:
             Status completo do sistema
         """
@@ -160,11 +160,11 @@ class ProtecaoEletrica:
             "ultima_protecao": self.dados_protecao,
             "timestamp": pd.Timestamp.now().isoformat()
         }
-    
+
     def validar_ieee_compliance(self) -> bool:
         """
         Validar conformidade com padrões IEEE
-        
+
         Returns:
             True se em conformidade
         """
@@ -175,9 +175,9 @@ class ProtecaoEletrica:
                 self.parametros["tempo_operacao_max"] <= 120,
                 self.parametros["tolerancia_coordenacao"] >= 0.2
             ]
-            
+
             return all(compliance_checks)
-            
+
         except Exception:
             return False
 
@@ -186,7 +186,7 @@ class ProtecaoEletrica:
 def criar_sistema_protecao() -> ProtecaoEletrica:
     """
     Criar e retornar uma instância do sistema de proteção
-    
+
     Returns:
         Instância de ProtecaoEletrica
     """

@@ -32,15 +32,15 @@ jobs:
           python -c "
           import sys
           import os
-          
+
           # Add src to path
           sys.path.insert(0, 'src')
           sys.path.insert(0, os.path.join(os.getcwd(), 'src'))
-          
+
           print('🔍 Python path configured')
           print(f'Current directory: {os.getcwd()}')
           print(f'Python paths: {sys.path[:3]}')
-          
+
           # Test basic imports first
           try:
               import numpy as np
@@ -49,7 +49,7 @@ jobs:
           except Exception as e:
               print(f'❌ Basic dependencies failed: {e}')
               sys.exit(1)
-          
+
           # Test core imports
           try:
               from backend.core.protecao_eletrica import ProtecaoEletrica
