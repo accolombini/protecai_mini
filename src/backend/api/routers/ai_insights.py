@@ -200,18 +200,19 @@ async def get_before_after_analysis():
 async def rl_predict(request_data: Dict[str, Any]):
     """
     Predição usando modelo de Reinforcement Learning.
-    
+
     Endpoint essencial para predições do modelo RL treinado.
     """
     try:
         # Validar dados de entrada
         if not request_data:
-            raise HTTPException(status_code=422, detail="Request data is required")
-        
+            raise HTTPException(
+                status_code=422, detail="Request data is required")
+
         # Simular predição do modelo RL
         current_state = request_data.get("current_state", {})
         scenario_data = request_data.get("scenario", {})
-        
+
         # Predição simulada baseada no estado atual
         prediction = {
             "prediction_id": f"pred_{uuid.uuid4().hex[:8]}",
@@ -250,9 +251,9 @@ async def rl_predict(request_data: Dict[str, Any]):
             },
             "execution_status": "ready_for_implementation"
         }
-        
+
         return prediction
-        
+
     except HTTPException:
         raise
     except Exception as e:
@@ -870,16 +871,16 @@ def generate_retraining_schedule(models: List[ModelPerformance]) -> List[Dict[st
 async def start_rl_training(training_config: Optional[Dict[str, Any]] = None):
     """
     Inicia treinamento do modelo de Reinforcement Learning.
-    
+
     Endpoint para iniciar novo ciclo de treinamento RL.
     """
     try:
         if training_config is None:
             training_config = {}
-            
+
         # ID único para o treinamento
         training_id = f"train_{uuid.uuid4().hex[:8]}"
-        
+
         # Configuração padrão de treinamento
         config = {
             "algorithm": training_config.get("algorithm", "DQN"),
@@ -890,7 +891,7 @@ async def start_rl_training(training_config: Optional[Dict[str, Any]] = None):
             "batch_size": training_config.get("batch_size", 32),
             "target_update": training_config.get("target_update", 100)
         }
-        
+
         # Simular início do treinamento
         training_session = {
             "training_id": training_id,
@@ -912,9 +913,9 @@ async def start_rl_training(training_config: Optional[Dict[str, Any]] = None):
                 "gpu_usage": "78%" if training_config.get("use_gpu", True) else "0%"
             }
         }
-        
+
         return training_session
-        
+
     except Exception as e:
         raise HTTPException(
             status_code=500,
@@ -927,13 +928,14 @@ async def get_rl_training_status(training_id: str):
     """Status do treinamento RL em andamento."""
     try:
         if training_id == "not_found":
-            raise HTTPException(status_code=404, detail="Training session not found")
-            
+            raise HTTPException(
+                status_code=404, detail="Training session not found")
+
         # Simular status de treinamento
         import random
         progress = random.randint(15, 95)
         current_episode = int((progress / 100) * 5000)
-        
+
         status = {
             "training_id": training_id,
             "status": "running" if progress < 100 else "completed",
@@ -955,9 +957,9 @@ async def get_rl_training_status(training_id: str):
                 "q_value_mean": round(2.45 + (progress * 0.01), 2)
             }
         }
-        
+
         return status
-        
+
     except HTTPException:
         raise
     except Exception as e:

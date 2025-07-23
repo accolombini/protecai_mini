@@ -210,9 +210,9 @@ async def start_realtime_location(config: Optional[Dict[str, Any]] = None):
     """Inicia monitoramento de localização em tempo real."""
     if config is None:
         config = {}
-    
+
     session_id = f"rt_loc_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
-    
+
     monitoring_config = {
         "monitoring_interval": config.get("monitoring_interval", 1.0),
         "location_algorithm": config.get("location_algorithm", "impedance_based"),
@@ -221,7 +221,7 @@ async def start_realtime_location(config: Optional[Dict[str, Any]] = None):
         "enable_ml_enhancement": config.get("enable_ml_enhancement", True),
         "alert_on_low_confidence": config.get("alert_on_low_confidence", True)
     }
-    
+
     return {
         "session_id": session_id,
         "status": "started",
@@ -238,9 +238,9 @@ async def stop_realtime_location(session_id: Optional[str] = None):
     """Para monitoramento de localização em tempo real."""
     if session_id and session_id == "not_found":
         raise HTTPException(status_code=404, detail="Session not found")
-    
+
     session_id = session_id or f"rt_loc_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
-    
+
     return {
         "session_id": session_id,
         "status": "stopped",
@@ -261,9 +261,9 @@ async def get_realtime_location_status(session_id: Optional[str] = None):
     """Status do monitoramento de localização em tempo real."""
     if session_id and session_id == "not_found":
         raise HTTPException(status_code=404, detail="Session not found")
-    
+
     session_id = session_id or f"rt_loc_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
-    
+
     return {
         "session_id": session_id,
         "status": "active",
