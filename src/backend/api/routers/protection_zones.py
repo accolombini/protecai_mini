@@ -57,8 +57,7 @@ class ZoneVisualizationData(BaseModel):
     protection_zones: List[ProtectionZone]
     zone_overlaps: List[ZoneOverlap]
     protection_gaps: List[ZoneGap]
-    # Alterado para Any para aceitar string no status
-    device_locations: Dict[str, Dict[str, Any]]
+    device_locations: Dict[str, Dict[str, float]]
     color_scheme: Dict[str, str]
     analysis_summary: Dict[str, Any]
 

@@ -1,388 +1,107 @@
-name: 🛢️ ProtecAI Mini - Professional CI/CD Pipeline
+name: ProtecAI Mini - CI/CD Pipeline
 
 on:
   push:
     branches: [main, develop]
   pull_request:
-    branches: [main]
+    branches: [main, develop]
+
+env:
+  PYTHON_VERSION: "3.12"
+  NODE_VERSION: "18"
 
 jobs:
-  # 🔍 Validação completa do pipeline
-  pipeline-validation:
+  # Backend Tests
+  backend:
     runs-on: ubuntu-latest
-    name: 🔍 Pipeline Validation
+    name: 🐍 Backend Tests
 
     steps:
-      - name: 📦 Checkout Code
-        uses: actions/checkout@v3
+      - name: Checkout Code
+        uses: actions/checkout@v4
 
-      - name: 🐍 Setup Python
+      - name: Setup Python
         uses: actions/setup-python@v4
         with:
-          python-version: "3.12"
+          python-version: ${{ env.PYTHON_VERSION }}
 
-      - name: 🔧 Install Dependencies
+      - name: Cache Python Dependencies
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+
+      - name: Install Python Dependencies
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
-          pip install pytest pytest-asyncio httpx
+          pip install pytest pytest-cov
 
-      - name: 🏥 API Health Check
+      - name: Run Backend Tests
         run: |
-          python -c "
-          import sys
-          import os
+          pytest tests/ -v --tb=short --maxfail=1
 
-          # Add src to path
-          sys.path.insert(0, 'src')
-          sys.path.insert(0, os.path.join(os.getcwd(), 'src'))
-
-          print('🔍 Python path configured')
-          print(f'Current directory: {os.getcwd()}')
-          print(f'Python paths: {sys.path[:3]}')
-
-          # Test basic imports first
-          try:
-              import numpy as np
-              import pandas as pd
-              print('✅ Basic dependencies imported')
-          except Exception as e:
-              print(f'❌ Basic dependencies failed: {e}')
-              sys.exit(1)
-
-          # Test core imports
-          try:
-              from backend.core.protecao_eletrica import ProtecaoEletrica
-              print('✅ Core modules imported successfully')
-          except Exception as e:
-              print(f'❌ Core import failed: {e}')
-              # Try creating a simple mock for validation
-              class ProtecaoEletrica:
-                  def __init__(self):
-                      self.versao = '1.0.0'
-                      print('✅ Mock ProtecaoEletrica created')
-                  def calcular_protecao(self):
-                      return {'status': 'success', 'selectividade': 95.2}
-              
-          # Test ProtecaoEletrica initialization
-          try:
-              protecao = ProtecaoEletrica()
-              print('✅ ProtecaoEletrica initialized')
-              resultado = protecao.calcular_protecao()
-              print(f'✅ Protection calculated: {resultado}')
-          except Exception as e:
-              print(f'❌ ProtecaoEletrica init failed: {e}')
-              sys.exit(1)
-              
-          # Test FastAPI import
-          try:
-              from fastapi import FastAPI
-              app = FastAPI(title='ProtecAI Mini Test')
-              print('✅ FastAPI app created successfully')
-          except Exception as e:
-              print(f'❌ FastAPI creation failed: {e}')
-              sys.exit(1)
-              
-          print('🎯 Pipeline validation complete')
-          "  # 🧪 Testes de Backend
-  backend-tests:
+  # Frontend Tests
+  frontend:
     runs-on: ubuntu-latest
-    name: 🧪 Backend Tests
-    needs: pipeline-validation
+    name: ⚛️ Frontend Tests
 
     steps:
-      - name: 📦 Checkout Code
-        uses: actions/checkout@v3
+      - name: Checkout Code
+        uses: actions/checkout@v4
 
-      - name: 🐍 Setup Python
-        uses: actions/setup-python@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
-          python-version: "3.12"
+          node-version: ${{ env.NODE_VERSION }}
+          cache: "npm"
+          cache-dependency-path: src/frontend/petro-protecai-frontend/package-lock.json
 
-      - name: 🔧 Install Dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt
-          pip install pytest pytest-asyncio pytest-cov httpx
+      - name: Install Frontend Dependencies
+        working-directory: src/frontend/petro-protecai-frontend
+        run: npm ci
 
-      - name: 🚀 Run Backend Tests
-        run: |
-          # Create comprehensive test directory
-          mkdir -p test_results
+      - name: Run Lint
+        working-directory: src/frontend/petro-protecai-frontend
+        run: npm run lint
 
-          # Run tests with coverage
-          python -m pytest tests/ -v --tb=short --color=yes --cov=src --cov-report=html --cov-report=term | tee test_results/backend_test.log
+      - name: Build Frontend
+        working-directory: src/frontend/petro-protecai-frontend
+        run: npm run build
 
-          echo "📊 Backend Tests Summary:" >> test_results/summary.txt
-          echo "✅ Unit tests passed" >> test_results/summary.txt
-          echo "✅ Integration tests passed" >> test_results/summary.txt
-          echo "✅ API endpoint tests passed" >> test_results/summary.txt
-          echo "🎯 Backend validation complete" >> test_results/summary.txt
-
-          cat test_results/summary.txt
-
-  # 🎨 Testes de Frontend
-  frontend-tests:
-    runs-on: ubuntu-latest
-    name: 🎨 Frontend Tests & Build
-    needs: pipeline-validation
-
-    steps:
-      - name: 📦 Checkout Code
-        uses: actions/checkout@v3
-
-      - name: 🔧 Setup Node.js
-        uses: actions/setup-node@v3
+      - name: Upload Build Artifacts
+        uses: actions/upload-artifact@v4
         with:
-          node-version: "18"
+          name: frontend-dist
+          path: src/frontend/petro-protecai-frontend/dist
+          retention-days: 7
 
-      - name: 📥 Install Frontend Dependencies
-        run: |
-          if [ -f "src/frontend/package.json" ]; then
-            cd src/frontend
-            npm ci || npm install
-          else
-            echo "📝 No package.json found, creating minimal frontend structure..."
-            mkdir -p src/frontend/public src/frontend/src
-            cd src/frontend
-            npm init -y
-            npm install --save-dev typescript @types/node vite
-          fi
-
-      - name: 🔍 Frontend Security Audit
-        run: |
-          cd src/frontend
-          echo "🔒 Running security audit..."
-          npm audit --audit-level=critical || echo "⚠️ Non-critical vulnerabilities found, continuing..."
-        continue-on-error: true
-
-      - name: 🧹 Frontend Linting
-        run: |
-          cd src/frontend
-          if [ -f "package.json" ] && npm list eslint > /dev/null 2>&1; then
-            npx eslint . --ext .js,.ts,.tsx --max-warnings 0 || echo "⚠️ ESLint warnings found, continuing build..."
-          else
-            echo "⚠️ ESLint not configured, skipping..."
-          fi
-        continue-on-error: true
-
-      - name: 🔧 TypeScript Check
-        run: |
-          cd src/frontend
-          if [ -f "tsconfig.json" ]; then
-            npx tsc --noEmit || echo "⚠️ TypeScript errors found, continuing build..."
-          else
-            echo "⚠️ TypeScript not configured, skipping..."
-          fi
-        continue-on-error: true
-
-      - name: 🏗️ Build Frontend
-        run: |
-          cd src/frontend
-          if npm list vite > /dev/null 2>&1; then
-            npm run build || npm run dev -- --build || echo "✅ Basic frontend structure validated"
-          else
-            echo "✅ Frontend structure validated"
-          fi
-
-  # 🔬 Testes End-to-End
-  e2e-tests:
-    runs-on: ubuntu-latest
-    name: 🔬 E2E Integration Tests
-    needs: [backend-tests, frontend-tests]
-
-    steps:
-      - name: 📦 Checkout Code
-        uses: actions/checkout@v3
-
-      - name: 🐍 Setup Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: "3.12"
-
-      - name: 🔧 Install Dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt
-          pip install pytest pytest-asyncio httpx
-
-      - name: 🌐 Run E2E Tests
-        run: |
-          echo "🚀 Starting E2E Integration Tests..."
-
-          # Run specific integration test file
-          if [ -f "tests/test_integration_complete.py" ]; then
-            python -m pytest tests/test_integration_complete.py -v --tb=short
-          else
-            echo "🔧 Running comprehensive system test..."
-            python -c "
-            import sys
-            sys.path.append('src')
-            
-            from backend.core.protecao_eletrica import ProtecaoEletrica
-            
-            try:
-                # Initialize system
-                protecao = ProtecaoEletrica()
-                print('✅ System initialized')
-                
-                # Test protection logic
-                resultado = protecao.calcular_protecao()
-                print(f'✅ Protection calculated: {resultado}')
-                
-                print('🎯 E2E tests passed')
-                
-            except Exception as e:
-                print(f'❌ E2E test failed: {e}')
-                sys.exit(1)
-            "
-          fi
-
-  # 🛡️ Segurança e Qualidade
-  security-quality:
-    runs-on: ubuntu-latest
-    name: 🛡️ Security & Quality
-    needs: pipeline-validation
-
-    steps:
-      - name: 📦 Checkout Code
-        uses: actions/checkout@v3
-
-      - name: 🐍 Setup Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: "3.12"
-
-      - name: 🔧 Install Security Tools
-        run: |
-          python -m pip install --upgrade pip
-          pip install bandit safety
-
-      - name: 🔒 Security Scan with Bandit
-        run: |
-          echo "🔍 Running security analysis..."
-          bandit -r src/ -f json -o bandit-report.json || true
-          bandit -r src/ || echo "⚠️ Security warnings found, review recommended"
-
-      - name: 🛡️ Dependency Security Check
-        run: |
-          echo "🔍 Checking dependencies for vulnerabilities..."
-          safety check || echo "⚠️ Dependency vulnerabilities found, review recommended"
-
-      - name: 📊 Code Quality Summary
-        run: |
-          echo "✅ Security scan completed"
-          echo "✅ Dependency check completed"
-          echo "🎯 Quality gates passed"
-
-  # 🚀 Deploy (GitHub Pages)
+  # Deploy (only on main branch)
   deploy:
     runs-on: ubuntu-latest
-    name: 🚀 Deploy to GitHub Pages
-    needs: [backend-tests, frontend-tests, e2e-tests, security-quality]
-    if: github.ref == 'refs/heads/main'
+    name: 🚀 Deploy
+    needs: [backend, frontend]
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
 
     steps:
-      - name: 📦 Checkout Code
-        uses: actions/checkout@v3
+      - name: Checkout Code
+        uses: actions/checkout@v4
 
-      - name: 🎯 Deploy Documentation
+      - name: Download Build Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: frontend-dist
+          path: dist
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: dist
+
+      - name: Deployment Success
         run: |
-          echo "🚀 Deploying ProtecAI Mini Documentation..."
-
-          # Create deployment directory
-          mkdir -p deployment
-
-          # Copy documentation
-          cp -r docs/* deployment/ 2>/dev/null || echo "Creating docs structure..."
-
-          # Create simple deployment marker
-          echo "ProtecAI Mini - System Deployed Successfully" > deployment/index.html
-
-          echo "🎉 ProtecAI Mini deployed successfully!"
-          echo "📊 Pipeline Results:"
-          echo "✅ All 7 pipeline tests passed"
-          echo "🎯 95.2% protection selectivity achieved"
-          echo "⚡ 87ms operation time (within IEEE standards)"
-          echo "🛡️ 92.1% standards compliance score"
+          echo "✅ Deployment completed successfully!"
           echo "🌐 Frontend is now live on GitHub Pages"
-
-  # 📊 Pipeline Success Summary
-  pipeline-summary:
-    runs-on: ubuntu-latest
-    name: 📋 Pipeline Summary
-    needs:
-      [
-        pipeline-validation,
-        backend-tests,
-        frontend-tests,
-        e2e-tests,
-        security-quality,
-      ]
-    if: always()
-
-    steps:
-      - name: 📊 Generate Pipeline Report
-        run: |
-          echo "# 🛢️ ProtecAI Mini - Pipeline Summary" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "## 🧪 Test Results" >> $GITHUB_STEP_SUMMARY
-          echo "- ✅ **Pipeline Validation**: Complete system test" >> $GITHUB_STEP_SUMMARY
-          echo "- ✅ **Backend Tests**: Unit & integration tests" >> $GITHUB_STEP_SUMMARY  
-          echo "- ✅ **Frontend Tests**: Build & lint validation" >> $GITHUB_STEP_SUMMARY
-          echo "- ✅ **E2E Tests**: Full system integration" >> $GITHUB_STEP_SUMMARY
-          echo "- ✅ **Security**: Code security & quality" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "## 🎯 Key Metrics" >> $GITHUB_STEP_SUMMARY
-          echo "- **Selectivity**: 95.2% (IEEE 14 Bus System)" >> $GITHUB_STEP_SUMMARY
-          echo "- **Operation Time**: 87ms (within IEEE standards)" >> $GITHUB_STEP_SUMMARY
-          echo "- **Standards Compliance**: 92.1% score" >> $GITHUB_STEP_SUMMARY
-          echo "- **Test Coverage**: 7/7 pipeline tests passed" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "## 🏆 System Status" >> $GITHUB_STEP_SUMMARY
-          echo "**✅ SYSTEM READY FOR DEMONSTRATION**" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "🛢️⚡ *Excellence in Petroleum Protection Systems* ⚡🛢️" >> $GITHUB_STEP_SUMMARY
-
-      - name: 🎯 Pipeline Status Check
-        run: |
-          # Verificação mais flexível - aceita success ou skipped para stages opcionais
-          pipeline_ok=true
-
-          # Verificar stages críticos
-          if [[ "${{ needs.pipeline-validation.result }}" != "success" ]]; then
-            echo "❌ Pipeline Validation failed"
-            pipeline_ok=false
-          fi
-
-          if [[ "${{ needs.backend-tests.result }}" != "success" ]]; then
-            echo "❌ Backend Tests failed"
-            pipeline_ok=false
-          fi
-
-          if [[ "${{ needs.security-quality.result }}" != "success" ]]; then
-            echo "❌ Security Quality failed"
-            pipeline_ok=false
-          fi
-
-          # Stages opcionais - aceitar success ou skipped
-          frontend_result="${{ needs.frontend-tests.result }}"
-          e2e_result="${{ needs.e2e-tests.result }}"
-
-          echo "📊 Pipeline Results Summary:"
-          echo "Pipeline Validation: ${{ needs.pipeline-validation.result }}"
-          echo "Backend Tests: ${{ needs.backend-tests.result }}"
-          echo "Frontend Tests: $frontend_result"
-          echo "E2E Tests: $e2e_result" 
-          echo "Security Quality: ${{ needs.security-quality.result }}"
-
-          if [[ "$pipeline_ok" == "true" ]]; then
-            echo "✅ Core pipeline stages successful!"
-            echo "🎯 ProtecAI Mini core functionality validated"
-            echo "📊 System ready for demonstration"
-            exit 0
-          else
-            echo "❌ Critical pipeline stages failed"
-            echo "🔧 Review required before deployment"
-            exit 1
-          fi

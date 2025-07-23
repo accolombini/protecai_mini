@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 '''
-    ||> Script de Instalação Inteligente - ProtecAI_Mini Laboratory
+    ||> Script de Instalação Inteligente - Laboratório ProtecAI_Mini
         - Verifica dependências instaladas
         - Instala apenas bibliotecas faltantes
-        - Otimiza ambiente para ML/AI em coordenação de proteção
+        - Otimiza ambiente para ML/IA em coordenação de proteção
         - Gera relatório de compatibilidade
 '''
 

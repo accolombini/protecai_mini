@@ -44,10 +44,10 @@ class ProtecaoEletrica:
         """
         Calcular proteção para o sistema elétrico
 
-        Args:
+        Parâmetros:
             dados_entrada: Dados do sistema elétrico (opcional)
 
-        Returns:
+        Retorna:
             Resultado do cálculo de proteção
         """
         try:
@@ -96,10 +96,10 @@ class ProtecaoEletrica:
         """
         Analisar falta no sistema
 
-        Args:
+        Parâmetros:
             tipo_falta: Tipo de falta a analisar
 
-        Returns:
+        Retorna:
             Análise da falta
         """
         try:
@@ -124,7 +124,7 @@ class ProtecaoEletrica:
         """
         Verificar coordenação entre dispositivos de proteção
 
-        Returns:
+        Retorna:
             Status da coordenação
         """
         try:
@@ -150,7 +150,7 @@ class ProtecaoEletrica:
         """
         Obter status atual do sistema
 
-        Returns:
+        Retorna:
             Status completo do sistema
         """
         return {
@@ -165,7 +165,7 @@ class ProtecaoEletrica:
         """
         Validar conformidade com padrões IEEE
 
-        Returns:
+        Retorna:
             True se em conformidade
         """
         try:
@@ -187,7 +187,7 @@ def criar_sistema_protecao() -> ProtecaoEletrica:
     """
     Criar e retornar uma instância do sistema de proteção
 
-    Returns:
+    Retorna:
         Instância de ProtecaoEletrica
     """
     return ProtecaoEletrica()
