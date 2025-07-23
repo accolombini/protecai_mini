@@ -22,7 +22,18 @@ import uvicorn
 from contextlib import asynccontextmanager
 
 # Importar routers
-from .routers import network, protection, simulation, rl_agent, visualization
+from .routers import (
+    network,
+    protection,
+    simulation,
+    rl_agent,
+    visualization,
+    fault_location,
+    protection_zones,
+    realtime_tracking,
+    ai_insights,
+    executive_validation
+)
 
 # Configurações globais
 API_VERSION = "1.0.0"
@@ -141,6 +152,37 @@ app.include_router(
     tags=["📊 Visualizações"]
 )
 
+# Novos routers para funcionalidades avançadas
+app.include_router(
+    fault_location.router,
+    prefix="/api/v1/fault-location",
+    tags=["📍 Localização de Faltas"]
+)
+
+app.include_router(
+    protection_zones.router,
+    prefix="/api/v1/protection-zones",
+    tags=["🛡️ Zonas de Proteção"]
+)
+
+app.include_router(
+    realtime_tracking.router,
+    prefix="/api/v1/realtime-tracking",
+    tags=["⏱️ Rastreamento Tempo Real"]
+)
+
+app.include_router(
+    ai_insights.router,
+    prefix="/api/v1/ai-insights",
+    tags=["🤖 Insights da IA"]
+)
+
+app.include_router(
+    executive_validation.router,
+    prefix="/api/v1/executive",
+    tags=["👔 Validação Executiva"]
+)
+
 # Endpoints principais
 
 
@@ -158,8 +200,25 @@ async def root():
             "protection": "/api/v1/protection",
             "simulation": "/api/v1/simulation",
             "rl": "/api/v1/rl",
-            "visualization": "/api/v1/visualization"
-        }
+            "visualization": "/api/v1/visualization",
+            "fault_location": "/api/v1/fault-location",
+            "protection_zones": "/api/v1/protection-zones",
+            "realtime_tracking": "/api/v1/realtime-tracking",
+            "ai_insights": "/api/v1/ai-insights",
+            "executive": "/api/v1/executive"
+        },
+        "features": [
+            "🏗️ Gestão de Rede IEEE 14 barras",
+            "🛡️ Configuração Dinâmica de Proteção",
+            "⚡ Simulações de Falhas",
+            "🧠 Otimização com RL/ML",
+            "📊 Visualizações Avançadas",
+            "📍 Localização Precisa de Faltas",
+            "🛡️ Análise de Zonas de Proteção",
+            "⏱️ Rastreamento em Tempo Real",
+            "🤖 Insights Inteligentes da IA",
+            "👔 Validação Executiva"
+        ]
     }
 
 

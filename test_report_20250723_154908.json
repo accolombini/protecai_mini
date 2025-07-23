@@ -1,0 +1,54 @@
+{
+  "test_run": {
+    "timestamp": "2025-07-23T15:49:08.764659",
+    "base_url": "http://localhost:8000",
+    "total_tests": 7,
+    "passed": 7,
+    "failed": 0,
+    "success_rate": 100.0
+  },
+  "results": [
+    {
+      "test": "Health Endpoint",
+      "status": "✅ PASS",
+      "message": "API está saudável",
+      "timestamp": "2025-07-23T15:49:05.187151"
+    },
+    {
+      "test": "Zones Configuration",
+      "status": "✅ PASS",
+      "message": "Zona 1 seletividade: 95.2%",
+      "timestamp": "2025-07-23T15:49:05.700290"
+    },
+    {
+      "test": "Real-time Status",
+      "status": "✅ PASS",
+      "message": "3 zonas monitoradas",
+      "timestamp": "2025-07-23T15:49:06.210267"
+    },
+    {
+      "test": "Fault Simulation",
+      "status": "✅ PASS",
+      "message": "relay_51_L25_primary operou em 87.0ms",
+      "timestamp": "2025-07-23T15:49:06.719556"
+    },
+    {
+      "test": "Network Visualization",
+      "status": "✅ PASS",
+      "message": "14 barras, 10 linhas",
+      "timestamp": "2025-07-23T15:49:07.233186"
+    },
+    {
+      "test": "Device Management",
+      "status": "✅ PASS",
+      "message": "12 zonas de proteção encontradas",
+      "timestamp": "2025-07-23T15:49:07.742877"
+    },
+    {
+      "test": "Standards Compliance",
+      "status": "✅ PASS",
+      "message": "Score de conformidade: 92.1%",
+      "timestamp": "2025-07-23T15:49:08.259012"
+    }
+  ]
+}

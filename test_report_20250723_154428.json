@@ -1,0 +1,54 @@
+{
+  "test_run": {
+    "timestamp": "2025-07-23T15:44:28.480165",
+    "base_url": "http://localhost:8000",
+    "total_tests": 7,
+    "passed": 3,
+    "failed": 4,
+    "success_rate": 42.857142857142854
+  },
+  "results": [
+    {
+      "test": "Health Endpoint",
+      "status": "✅ PASS",
+      "message": "API está saudável",
+      "timestamp": "2025-07-23T15:44:24.904722"
+    },
+    {
+      "test": "Zones Configuration",
+      "status": "✅ PASS",
+      "message": "Zona 1 seletividade: 95.2%",
+      "timestamp": "2025-07-23T15:44:25.415390"
+    },
+    {
+      "test": "Real-time Status",
+      "status": "✅ PASS",
+      "message": "3 zonas monitoradas",
+      "timestamp": "2025-07-23T15:44:25.923654"
+    },
+    {
+      "test": "Fault Simulation",
+      "status": "❌ FAIL",
+      "message": "Estrutura de resposta inválida",
+      "timestamp": "2025-07-23T15:44:26.435604"
+    },
+    {
+      "test": "Network Visualization",
+      "status": "❌ FAIL",
+      "message": "Status code: 404",
+      "timestamp": "2025-07-23T15:44:26.949530"
+    },
+    {
+      "test": "Device Management",
+      "status": "❌ FAIL",
+      "message": "Status code: 404",
+      "timestamp": "2025-07-23T15:44:27.464078"
+    },
+    {
+      "test": "Standards Compliance",
+      "status": "❌ FAIL",
+      "message": "Status code: 404",
+      "timestamp": "2025-07-23T15:44:27.978126"
+    }
+  ]
+}

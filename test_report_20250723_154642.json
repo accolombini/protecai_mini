@@ -1,0 +1,54 @@
+{
+  "test_run": {
+    "timestamp": "2025-07-23T15:46:42.923985",
+    "base_url": "http://localhost:8000",
+    "total_tests": 7,
+    "passed": 4,
+    "failed": 3,
+    "success_rate": 57.14285714285714
+  },
+  "results": [
+    {
+      "test": "Health Endpoint",
+      "status": "✅ PASS",
+      "message": "API está saudável",
+      "timestamp": "2025-07-23T15:46:39.344166"
+    },
+    {
+      "test": "Zones Configuration",
+      "status": "✅ PASS",
+      "message": "Zona 1 seletividade: 95.2%",
+      "timestamp": "2025-07-23T15:46:39.854023"
+    },
+    {
+      "test": "Real-time Status",
+      "status": "✅ PASS",
+      "message": "3 zonas monitoradas",
+      "timestamp": "2025-07-23T15:46:40.364720"
+    },
+    {
+      "test": "Fault Simulation",
+      "status": "❌ FAIL",
+      "message": "Estrutura de resposta inválida",
+      "timestamp": "2025-07-23T15:46:40.877242"
+    },
+    {
+      "test": "Network Visualization",
+      "status": "❌ FAIL",
+      "message": "Estrutura de dados inválida",
+      "timestamp": "2025-07-23T15:46:41.392504"
+    },
+    {
+      "test": "Device Management",
+      "status": "✅ PASS",
+      "message": "12 zonas de proteção encontradas",
+      "timestamp": "2025-07-23T15:46:41.903173"
+    },
+    {
+      "test": "Standards Compliance",
+      "status": "❌ FAIL",
+      "message": "Status geral: None",
+      "timestamp": "2025-07-23T15:46:42.418236"
+    }
+  ]
+}

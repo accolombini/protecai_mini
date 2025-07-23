@@ -1,5 +1,9 @@
 import { useState, useEffect, useCallback } from 'react'
 import './index.css'
+import { ZoneConfiguration } from './components/ZoneConfiguration'
+import { NetworkDiagram } from './components/NetworkDiagram'
+import { DeviceManagement } from './components/DeviceManagement'
+import { SimulationControls } from './components/SimulationControls'
 
 // Tipos para dados da API
 interface NetworkInfo {
@@ -449,10 +453,10 @@ function App() {
               <NetworkTab networkInfo={networkInfo} systemState={systemState} />
             )}
             {activeTab === 'protection' && (
-              <ProtectionTab protectionData={protectionData} />
+              <DeviceManagement />
             )}
             {activeTab === 'simulation' && (
-              <SimulationTab systemState={systemState} />
+              <SimulationControls />
             )}
             {activeTab === 'scenarios' && (
               <ScenariosTab
@@ -656,6 +660,9 @@ function DashboardTab({
           ))}
         </div>
       </div>
+
+      {/* Configuração das Zonas de Proteção */}
+      <ZoneConfiguration />
     </div>
   )
 }
@@ -732,12 +739,8 @@ function NetworkTab({ networkInfo, systemState }: { networkInfo: NetworkInfo | n
         </div>
       </div>
 
-      <div className="bg-white rounded-lg shadow p-6">
-        <h3 className="text-lg font-medium text-gray-900 mb-4">Visualização da Rede</h3>
-        <div className="h-64 bg-gray-100 rounded-lg flex items-center justify-center">
-          <p className="text-gray-500">Diagrama da rede será implementado aqui</p>
-        </div>
-      </div>
+      {/* Diagrama Interativo da Rede */}
+      <NetworkDiagram />
     </div>
   )
 }
