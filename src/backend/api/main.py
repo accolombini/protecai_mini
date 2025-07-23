@@ -177,6 +177,13 @@ app.include_router(
     tags=["🤖 Insights da IA"]
 )
 
+# Router específico para RL
+app.include_router(
+    ai_insights.router,
+    prefix="/api/v1/rl",
+    tags=["🎯 Reinforcement Learning"]
+)
+
 app.include_router(
     executive_validation.router,
     prefix="/api/v1/executive",
