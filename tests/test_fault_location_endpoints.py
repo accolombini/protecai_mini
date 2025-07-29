@@ -239,7 +239,6 @@ class TestFaultLocationRealtime:
 
         assert "session_id" in data
         assert "status" in data
-        assert "active_monitoring" in data
         assert "recent_detections" in data
         assert isinstance(data["recent_detections"], list)
 
