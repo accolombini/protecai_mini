@@ -1,0 +1,403 @@
+import { useState, useEffect } from 'react'
+
+interface SystemMetrics {
+  uptime: string
+  cpu_usage: number
+  memory_usage: number
+  active_simulations: number
+  total_devices: number
+  network_status: 'healthy' | 'warning' | 'critical'
+}
+
+interface Alert {
+  id: number
+  type: 'info' | 'warning' | 'error'
+  message: string
+  time: string
+}
+
+export default function DashboardTab() {
+  const [metrics, setMetrics] = useState<SystemMetrics>({
+    uptime: '2h 45m',
+    cpu_usage: 23,
+    memory_usage: 67,
+    active_simulations: 3,
+    total_devices: 42,
+    network_status: 'healthy'
+  })
+
+  const [alerts] = useState<Alert[]>([
+    { id: 1, type: 'info', message: 'Relé 50/51 Bus-4 atualizou configuração', time: '14:30' },
+    { id: 2, type: 'warning', message: 'Coordenação Bus-6/13 requer ajuste', time: '14:25' },
+    { id: 3, type: 'info', message: 'RL treinamento episódio 1247 completo', time: '14:20' }
+  ])
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setMetrics(prev => ({
+        ...prev,
+        cpu_usage: Math.floor(Math.random() * 30) + 15,
+        memory_usage: Math.floor(Math.random() * 20) + 60
+      }))
+    }, 5000)
+
+    return () => clearInterval(interval)
+  }, [])
+
+  return (
+    <div className="space-y-6">
+      {/* Header - Plataforma Offshore */}
+      <div className="flex justify-between items-center">
+        <h1 className="text-3xl font-bold text-gray-900">🛢️ ProtecAI - Proteção Elétrica Offshore 13.8kV</h1>
+        <div className="flex space-x-4">
+          <div className="px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
+            ✅ IEEE 14-Bus Ativo
+          </div>
+          <div className="px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
+            🤖 RL Coordenação
+          </div>
+          <div className="px-3 py-1 rounded-full text-sm font-medium bg-purple-100 text-purple-800">
+            🛡️ ANSI 50/51/67/87T
+          </div>
+          <div className="px-3 py-1 rounded-full text-sm font-medium bg-orange-100 text-orange-800">
+            ⚡ 13.8kV Offshore
+          </div>
+        </div>
+      </div>
+
+      {/* Métricas de Proteção Offshore */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        {/* Barras IEEE 14-Bus */}
+        <div className="bg-white p-6 rounded-xl shadow-lg border-l-4 border-blue-500">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm text-gray-600">Barras IEEE 14-Bus</p>
+              <p className="text-3xl font-bold text-blue-600">14</p>
+              <p className="text-xs text-green-600">100% Monitoradas</p>
+            </div>
+            <div className="text-4xl">⚡</div>
+          </div>
+        </div>
+
+        {/* Tensão Offshore 13.8kV */}
+        <div className="bg-white p-6 rounded-xl shadow-lg border-l-4 border-green-500">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm text-gray-600">Tensão Offshore (kV)</p>
+              <p className="text-3xl font-bold text-green-600">13.8</p>
+              <p className="text-xs text-green-600">Nominal</p>
+            </div>
+            <div className="text-4xl">🌊</div>
+          </div>
+        </div>
+
+        {/* Dispositivos ANSI */}
+        <div className="bg-white p-6 rounded-xl shadow-lg border-l-4 border-purple-500">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm text-gray-600">Dispositivos ANSI</p>
+              <p className="text-3xl font-bold text-purple-600">28</p>
+              <p className="text-xs text-green-600">50/51/67/87T Ativos</p>
+            </div>
+            <div className="text-4xl">🛡️</div>
+          </div>
+        </div>
+
+        {/* Status RL */}
+        <div className="bg-white p-6 rounded-xl shadow-lg border-l-4 border-orange-500">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm text-gray-600">RL Coordenação</p>
+              <p className="text-3xl font-bold text-orange-600">98.3%</p>
+              <p className="text-xs text-green-600">Eficiência</p>
+            </div>
+            <div className="text-4xl">🧠</div>
+          </div>
+        </div>
+      </div>
+
+      {/* Status da Proteção Offshore */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Dispositivos de Proteção ANSI */}
+        <div className="bg-white p-6 rounded-xl shadow-lg">
+          <h3 className="text-xl font-semibold mb-4">�️ Dispositivos de Proteção ANSI</h3>
+          <div className="space-y-4">
+            <div className="flex justify-between items-center p-3 bg-green-50 rounded-lg">
+              <span className="font-medium">Relés 50/51 (Sobrecorrente)</span>
+              <span className="text-green-600 font-bold">12/12 ✅</span>
+            </div>
+            <div className="flex justify-between items-center p-3 bg-green-50 rounded-lg">
+              <span className="font-medium">Relés 67 (Direcional)</span>
+              <span className="text-green-600 font-bold">7/7 ✅</span>
+            </div>
+            <div className="flex justify-between items-center p-3 bg-green-50 rounded-lg">
+              <span className="font-medium">Relés 87T (Diferencial)</span>
+              <span className="text-green-600 font-bold">2/2 ✅</span>
+            </div>
+            <div className="flex justify-between items-center p-3 bg-yellow-50 rounded-lg">
+              <span className="font-medium">Relés 27/59 (Sub/Sobretensão)</span>
+              <span className="text-yellow-600 font-bold">4/4 ⚠️</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Alertas Offshore */}
+        <div className="bg-white p-6 rounded-xl shadow-lg">
+          <h3 className="text-xl font-semibold mb-4">🚨 Alertas Plataforma Offshore</h3>
+          <div className="space-y-3">
+            {alerts.map(alert => (
+              <div key={alert.id} className={`p-3 rounded-lg border-l-4 ${
+                alert.type === 'warning' ? 'bg-yellow-50 border-yellow-400' :
+                alert.type === 'info' ? 'bg-blue-50 border-blue-400' :
+                'bg-green-50 border-green-400'
+              }`}>
+                <div className="flex justify-between items-start">
+                  <p className="text-sm font-medium">{alert.message}</p>
+                  <span className="text-xs text-gray-500">{alert.time}</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Conformidade Normativa Offshore */}
+      <div className="bg-white p-6 rounded-xl shadow-lg">
+        <h3 className="text-xl font-semibold mb-4">📋 Conformidade Normativa Offshore</h3>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div className="text-center p-4 bg-green-50 rounded-lg">
+            <div className="text-2xl font-bold text-green-600 mb-2">✅</div>
+            <div className="text-sm font-medium">IEEE C37.112</div>
+            <div className="text-xs text-gray-600">Conforme</div>
+          </div>
+          <div className="text-center p-4 bg-green-50 rounded-lg">
+            <div className="text-2xl font-bold text-green-600 mb-2">✅</div>
+            <div className="text-sm font-medium">IEC 61850</div>
+            <div className="text-xs text-gray-600">Conforme</div>
+          </div>
+          <div className="text-center p-4 bg-green-50 rounded-lg">
+            <div className="text-2xl font-bold text-green-600 mb-2">✅</div>
+            <div className="text-sm font-medium">NBR 5410</div>
+            <div className="text-xs text-gray-600">Conforme</div>
+          </div>
+          <div className="text-center p-4 bg-green-50 rounded-lg">
+            <div className="text-2xl font-bold text-green-600 mb-2">✅</div>
+            <div className="text-sm font-medium">API RP 14C</div>
+            <div className="text-xs text-gray-600">Offshore</div>
+          </div>
+        </div>
+      </div>
+
+      {/* Performance RL e Coordenação */}
+      <div className="bg-white p-6 rounded-xl shadow-lg">
+        <h3 className="text-xl font-semibold mb-4">📈 Performance RL - Coordenação Adaptativa</h3>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="text-center">
+            <div className="text-4xl font-bold text-blue-600 mb-2">98.7%</div>
+            <div className="text-sm text-gray-600">Confiabilidade Offshore</div>
+            <div className="text-xs text-gray-500">Ultra-conservadora</div>
+          </div>
+          <div className="text-center">
+            <div className="text-4xl font-bold text-green-600 mb-2">15ms</div>
+            <div className="text-sm text-gray-600">Tempo Resposta</div>
+            <div className="text-xs text-gray-500">Tempo real</div>
+          </div>
+          <div className="text-center">
+            <div className="text-4xl font-bold text-purple-600 mb-2">+23%</div>
+            <div className="text-sm text-gray-600">Melhoria RL</div>
+            <div className="text-xs text-gray-500">Coordenação otimizada</div>
+          </div>
+        </div>
+      </div>
+
+      {/* Ações Rápidas Offshore */}
+      <div className="bg-white p-6 rounded-xl shadow-lg">
+        <h3 className="text-xl font-semibold mb-4">⚡ Controle Offshore - Ações Rápidas</h3>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <button className="p-4 bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors">
+            <div className="text-2xl mb-2">🧪</div>
+            <div className="text-sm font-medium">Simulação IEEE</div>
+          </button>
+          <button className="p-4 bg-green-50 rounded-lg hover:bg-green-100 transition-colors">
+            <div className="text-2xl mb-2">�️</div>
+            <div className="text-sm font-medium">Config. ANSI</div>
+          </button>
+          <button className="p-4 bg-purple-50 rounded-lg hover:bg-purple-100 transition-colors">
+            <div className="text-2xl mb-2">🧠</div>
+            <div className="text-sm font-medium">Treinar RL</div>
+          </button>
+          <button className="p-4 bg-orange-50 rounded-lg hover:bg-orange-100 transition-colors">
+            <div className="text-2xl mb-2">�</div>
+            <div className="text-sm font-medium">Relatório 13.8kV</div>
+          </button>
+        </div>
+      </div>
+    </div>
+  )
+}
+}
+    network_status: 'healthy'
+  })
+
+  const [alerts, setAlerts] = useState([
+    { id: 1, type: 'warning', message: 'Relay R-12 configuração precisa revisão', time: '10:30' },
+    { id: 2, type: 'info', message: 'Simulação de contingência concluída com sucesso', time: '10:15' },
+    { id: 3, type: 'success', message: 'Otimização RL melhorou coordenação em 15%', time: '09:45' }
+  ])
+
+  return (
+    <div className="space-y-6">
+      {/* Header */}
+            {/* Header */}
+      <div className="flex justify-between items-center">
+        <h1 className="text-3xl font-bold text-gray-900">🛢️ Sistema de Potência - Plataforma Offshore</h1>
+        <div className="flex space-x-4">
+          <div className="px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
+            ✅ IEEE 14-Bus Operacional
+          </div>
+          <div className="px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
+            �️ Proteção Ativa
+          </div>
+          <div className="px-3 py-1 rounded-full text-sm font-medium bg-purple-100 text-purple-800">
+            🤖 RL Otimizado
+          </div>
+        </div>
+      </div>
+
+      {/* Métricas Principais */}
+            {/* Métricas do Sistema IEEE 14-Bus */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="bg-white p-6 rounded-xl shadow-lg border-l-4 border-blue-500">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm text-gray-600">Barras IEEE 14-Bus</p>
+              <p className="text-3xl font-bold text-blue-600">14</p>
+              <p className="text-xs text-green-600">100% Monitoradas</p>
+            </div>
+            <div className="text-4xl">⚡</div>
+          </div>
+        </div>
+
+        <div className="bg-white p-6 rounded-xl shadow-lg border-l-4 border-green-500">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm text-gray-600">Tensão Média (pu)</p>
+              <p className="text-3xl font-bold text-green-600">1.024</p>
+              <p className="text-xs text-green-600">Dentro da faixa</p>
+            </div>
+            <div className="text-4xl">📊</div>
+          </div>
+        </div>
+
+        <div className="bg-white p-6 rounded-xl shadow-lg border-l-4 border-purple-500">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm text-gray-600">Potência Total (MW)</p>
+              <p className="text-3xl font-bold text-purple-600">259.3</p>
+              <p className="text-xs text-green-600">+2.1% eficiência</p>
+            </div>
+            <div className="text-4xl">�</div>
+          </div>
+        </div>
+
+        <div className="bg-white p-6 rounded-xl shadow-lg border-l-4 border-orange-500">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm text-gray-600">Relés de Proteção</p>
+              <p className="text-3xl font-bold text-orange-600">28</p>
+              <p className="text-xs text-green-600">Coordenados RL</p>
+            </div>
+            <div className="text-4xl">🛡️</div>
+          </div>
+        </div>
+      </div>
+
+      {/* Status da Rede e Alertas */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Status da Rede IEEE 14 */}
+        <div className="bg-white p-6 rounded-xl shadow-lg">
+          <h3 className="text-xl font-semibold mb-4">🔌 Status da Rede IEEE 14-Bus</h3>
+          <div className="space-y-4">
+            <div className="flex justify-between items-center p-3 bg-green-50 rounded-lg">
+              <span className="font-medium">Barras de Transmissão</span>
+              <span className="text-green-600 font-bold">14/14 ✅</span>
+            </div>
+            <div className="flex justify-between items-center p-3 bg-green-50 rounded-lg">
+              <span className="font-medium">Linhas de Transmissão</span>
+              <span className="text-green-600 font-bold">20/20 ✅</span>
+            </div>
+            <div className="flex justify-between items-center p-3 bg-yellow-50 rounded-lg">
+              <span className="font-medium">Transformadores</span>
+              <span className="text-yellow-600 font-bold">3/3 ⚠️</span>
+            </div>
+            <div className="flex justify-between items-center p-3 bg-green-50 rounded-lg">
+              <span className="font-medium">Cargas</span>
+              <span className="text-green-600 font-bold">11/11 ✅</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Alertas Recentes */}
+        <div className="bg-white p-6 rounded-xl shadow-lg">
+          <h3 className="text-xl font-semibold mb-4">🚨 Alertas e Notificações</h3>
+          <div className="space-y-3">
+            {alerts.map(alert => (
+              <div key={alert.id} className={`p-3 rounded-lg border-l-4 ${
+                alert.type === 'warning' ? 'bg-yellow-50 border-yellow-400' :
+                alert.type === 'info' ? 'bg-blue-50 border-blue-400' :
+                'bg-green-50 border-green-400'
+              }`}>
+                <div className="flex justify-between items-start">
+                  <p className="text-sm font-medium">{alert.message}</p>
+                  <span className="text-xs text-gray-500">{alert.time}</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Gráficos de Performance */}
+      <div className="bg-white p-6 rounded-xl shadow-lg">
+        <h3 className="text-xl font-semibold mb-4">📈 Performance do Sistema</h3>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="text-center">
+            <div className="text-4xl font-bold text-blue-600 mb-2">98.7%</div>
+            <div className="text-sm text-gray-600">Confiabilidade</div>
+          </div>
+          <div className="text-center">
+            <div className="text-4xl font-bold text-green-600 mb-2">15ms</div>
+            <div className="text-sm text-gray-600">Tempo de Resposta</div>
+          </div>
+          <div className="text-center">
+            <div className="text-4xl font-bold text-purple-600 mb-2">+23%</div>
+            <div className="text-sm text-gray-600">Melhoria RL</div>
+          </div>
+        </div>
+      </div>
+
+      {/* Ações Rápidas */}
+      <div className="bg-white p-6 rounded-xl shadow-lg">
+        <h3 className="text-xl font-semibold mb-4">⚡ Ações Rápidas</h3>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <button className="p-4 bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors">
+            <div className="text-2xl mb-2">🧪</div>
+            <div className="text-sm font-medium">Nova Simulação</div>
+          </button>
+          <button className="p-4 bg-green-50 rounded-lg hover:bg-green-100 transition-colors">
+            <div className="text-2xl mb-2">🔧</div>
+            <div className="text-sm font-medium">Configurar Relés</div>
+          </button>
+          <button className="p-4 bg-purple-50 rounded-lg hover:bg-purple-100 transition-colors">
+            <div className="text-2xl mb-2">📊</div>
+            <div className="text-sm font-medium">Análise RL</div>
+          </button>
+          <button className="p-4 bg-orange-50 rounded-lg hover:bg-orange-100 transition-colors">
+            <div className="text-2xl mb-2">📋</div>
+            <div className="text-sm font-medium">Relatório IEEE</div>
+          </button>
+        </div>
+      </div>
+    </div>
+  )
+}
