@@ -1,0 +1,27 @@
+{
+  "training_id": "8b6ba02a-0dc0-49bd-8aab-3fa67979f36d",
+  "episodes": 1000,
+  "final_reward": 74.97,
+  "config": {
+    "episodes": 1000,
+    "learning_rate": 0.001,
+    "discount_factor": 0.95,
+    "epsilon_start": 1.0,
+    "epsilon_end": 0.1,
+    "epsilon_decay": 0.995,
+    "reward_weights": {
+      "coordination": 0.4,
+      "response_time": 0.3,
+      "selectivity": 0.3
+    },
+    "network_architecture": {
+      "hidden_layers": [
+        128,
+        64
+      ],
+      "activation": "relu",
+      "optimizer": "adam"
+    }
+  },
+  "trained_at": "2025-07-30T22:15:55.248415"
+}

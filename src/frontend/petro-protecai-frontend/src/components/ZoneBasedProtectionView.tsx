@@ -241,7 +241,7 @@ const ZoneBasedProtectionView = () => {
           <button 
             onClick={async () => {
               try {
-                const response = await fetch('http://localhost:8000/optimize_coordination', {
+                const response = await fetch('http://localhost:8000/api/v1/rl/train', {
                   method: 'POST',
                   headers: { 'Content-Type': 'application/json' },
                   body: JSON.stringify({ zones: ['Z1', 'Z2'], algorithm: 'Q-Learning' })
@@ -271,10 +271,13 @@ const ZoneBasedProtectionView = () => {
           <button 
             onClick={async () => {
               try {
-                const response = await fetch('http://localhost:8000/apply_rl_settings', {
+                const response = await fetch('http://localhost:8000/api/v1/rl/models/latest/apply', {
                   method: 'POST',
                   headers: { 'Content-Type': 'application/json' },
-                  body: JSON.stringify({ apply_recommended: true })
+                  body: JSON.stringify({ 
+                    apply_to_devices: { zones: 1.0 }, 
+                    confirmation: { confirmed: 1.0, message: 1.0 }
+                  })
                 });
                 
                 if (response.ok) {
@@ -301,10 +304,16 @@ const ZoneBasedProtectionView = () => {
           <button 
             onClick={async () => {
               try {
-                const response = await fetch('http://localhost:8000/simulate_with_rl', {
+                const response = await fetch('http://localhost:8000/api/v1/simulation/run', {
                   method: 'POST',
                   headers: { 'Content-Type': 'application/json' },
-                  body: JSON.stringify({ test_scenarios: ['fault_Z1', 'fault_Z2'] })
+                  body: JSON.stringify({ 
+                    name: "RL_Test_Simulation",
+                    faults: [
+                      { element_type: "bus", element_id: 4, fault_type: "3ph", severity: "0.8" },
+                      { element_type: "bus", element_id: 14, fault_type: "2ph", severity: "0.6" }
+                    ]
+                  })
                 });
                 
                 if (response.ok) {
@@ -331,7 +340,7 @@ const ZoneBasedProtectionView = () => {
           <button 
             onClick={async () => {
               try {
-                const response = await fetch('http://localhost:8000/validate_coordination', {
+                const response = await fetch('http://localhost:8000/api/v1/protection/coordination/analyze', {
                   method: 'POST',
                   headers: { 'Content-Type': 'application/json' },
                   body: JSON.stringify({ check_all_zones: true })

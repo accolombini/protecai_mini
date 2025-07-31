@@ -1,0 +1,22 @@
+{
+  "episodes": 1000,
+  "learning_rate": 0.001,
+  "discount_factor": 0.95,
+  "epsilon_start": 1.0,
+  "epsilon_end": 0.1,
+  "epsilon_decay": 0.995,
+  "reward_weights": {
+    "coordination": 0.4,
+    "response_time": 0.3,
+    "selectivity": 0.3
+  },
+  "network_architecture": {
+    "hidden_layers": [
+      128,
+      64
+    ],
+    "activation": "relu",
+    "optimizer": "adam"
+  },
+  "output_model_path": "simuladores/power_sim/models/model_8b6ba02a-0dc0-49bd-8aab-3fa67979f36d.pkl"
+}

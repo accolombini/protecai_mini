@@ -10,6 +10,13 @@ interface SystemMetrics {
   network_status: 'healthy' | 'warning' | 'critical'
 }
 
+interface Alert {
+  id: number
+  type: 'info' | 'warning' | 'error'
+  message: string
+  time: string
+}
+
 interface ProtectionDevice {
   id: string
   zone: 'Z1' | 'Z2'

@@ -12,6 +12,7 @@ interface BusData {
 
 export default function NetworkTab() {
   const [selectedBus, setSelectedBus] = useState<number | null>(null)
+  const [viewMode, setViewMode] = useState<'topological' | 'geographical'>('topological')
 
   const busData: BusData[] = [
     { id: 1, name: 'Bus 1 (Slack)', voltage: 1.06, angle: 0, load_p: 0, load_q: 0, status: 'normal' },
@@ -128,7 +129,7 @@ export default function NetworkTab() {
 
               {/* Cargas */}
               <g fill="#EF4444">
-                {busData.filter(bus => bus.load_p > 0).map((bus) => {
+                {busData.filter(bus => bus.load_p > 0).map((bus, index) => {
                   const x = 100 + (busData.indexOf(bus) % 4) * 100
                   const y = 100 + Math.floor(busData.indexOf(bus) / 4) * 100
                   return (
